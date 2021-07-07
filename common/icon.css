@@ -11,6 +11,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-xiaoxi1:before {
+  content: "\e67b";
+}
+
 .icon-fuzhi:before {
   content: "\e69e";
 }
