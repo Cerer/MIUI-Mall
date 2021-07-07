@@ -1,0 +1,8 @@
+/* 设置全局样式 */
+/*  */
+page {
+	height: 100%;
+	font-size: 28upx;
+	line-height: 1.8;
+	background: #FFFFFF;
+}
