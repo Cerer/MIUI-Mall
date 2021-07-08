@@ -431,10 +431,18 @@ body {
 
 /* flex布局start */
 /* 全布局 */
-.all-flex {
+.all-flex-row {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	flex-direction: row;
+}
+
+.all-flex-column {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
 }
 
 
@@ -554,6 +562,18 @@ body {
 	border-width: 1upx;
 	border-left-style: solid;
 	border-left-color: var(--borderColor);
+}
+
+.border-bottom {
+	border-width: 1upx;
+	border-bottom-style: solid;
+	border-bottom-color: var(--borderColor);
+}
+
+.scroll-border-bottom {
+	border-width: 1upx;
+	border-bottom-style: solid;
+	border-bottom-color: #FD6801;
 }
 
 /* 边框距离 */
@@ -1221,3 +1241,10 @@ body {
 /* 内边距end */
 
 /* 边距end */
+
+/* 分割线start */
+.cutLine {
+	height: 18upx;
+	background: #F5F5F5;
+}
+/* 分割线end */
