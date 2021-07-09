@@ -23,8 +23,8 @@
 
 		<swiper :duration="150" :style="'height:' + scrollH + 'px;'" @change="onChangeTab">
 			<swiper-item v-for="(item, index) of newsList" :key="index">
-				<scroll-view scroll-y="true" :style="'height:' + scrollH + 'px;'">
-					<block v-for="(list, listIndex) of item.list" :key="listIndex">
+				<scroll-view scroll-y="true" :style="'height:' + scrollH + 'px;'" @scrolltolower="loadMore(index)">
+					<block v-for="(list, listIndex) in item.list" :key="listIndex">
 						<!-- 轮播图组件 -->
 						<com-swipers v-if="list.type === 'swipers'" :resdata="list.data"></com-swipers>
 
@@ -45,14 +45,20 @@
 						</template>
 
 						<!-- 大图广告位 -->
-						<card headTitle="每日精选" bodyCover="/static/images/index/banner/1.jpg" />
+						<!-- <card headTitle="每日精选" bodyCover="/static/images/index/banner/1.jpg" /> -->
 
 						<view v-if="list.type === 'commonList'" class="row j-sb">
-							<block v-for="(keyItem, keyIndex) of list.data" :key="keyIndex">
+							<block v-for="(keyItem, keyIndex) in list.data" :key="keyIndex">
 								<com-list :item="keyItem" :index="keyIndex"></com-list>
 							</block>
 						</view>
 					</block>
+
+					<!-- 分割线 -->
+					<view class="cutLine"></view>
+
+					<!-- 加载更多 -->
+					<view class="all-flex-row text-linght-muted font-md py-3">{{ item.loadText }}</view>
 				</scroll-view>
 			</swiper-item>
 		</swiper>
@@ -303,6 +309,7 @@ export default {
 		comSwipers,
 		comNav,
 		threeAdv,
+		card,
 		comList
 	},
 	data() {
@@ -315,6 +322,14 @@ export default {
 			newsList: []
 		};
 	},
+	
+	// 点击搜索框
+	onNavigationBarSearchInputClicked() {
+		uni.navigateTo({
+			url: '/pages/search/search'
+		});
+	},
+
 	onLoad() {
 		// 获取可视区域高度
 		uni.getSystemInfo({
@@ -334,7 +349,10 @@ export default {
 			let arr = [];
 			for (let i = 0; i < this.tabBars.length; i++) {
 				let obj = {
-					list: []
+					list: [],
+
+					// 1.上拉加载更多 2.加载中... 3.没有更多了
+					loadText: '上拉加载更多'
 				};
 
 				// 获取首屏数据
@@ -368,6 +386,26 @@ export default {
 			} else {
 				this.newsList[index].list = demo2;
 			}
+		},
+
+		// 上拉加载
+		loadMore(index) {
+			let item = this.newsList[index];
+
+			// 是否处于可加载状态
+			if (item.loadText !== '上拉加载更多') {
+				return;
+			}
+
+			// 模拟数据
+			item.loadText = '加载中...';
+			setTimeout(() => {
+				// 加载数据
+				item.list = [...item.list, ...demo2];
+
+				// 恢复状态
+				item.loadText = '上拉加载更多';
+			}, 2000);
 		}
 	}
 };
