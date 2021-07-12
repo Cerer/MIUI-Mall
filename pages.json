@@ -63,15 +63,40 @@
 							"placeholder": "智能积木 越野四驱车",
 							"placeholderColor": "#CCCCCC"
 						},
-						"buttons": [
-							{
-								"color": "#989898",
-								"colorPressed": "#FD6801",
-								"float": "right",
-								"fontSize": "16px",
-								"text": "搜索"
-							}
-						]
+						"buttons": [{
+							"color": "#989898",
+							"colorPressed": "#FD6801",
+							"float": "right",
+							"fontSize": "16px",
+							"text": "搜索"
+						}]
+					}
+				}
+			}
+		},
+
+		// 搜索列表
+		{
+			"path": "pages/search-list/search-list",
+			"style": {
+				"app-plus": {
+					"scrollIndicator": "none", //不需要出现滚动条
+					"titleNView": {
+						"searchInput": {
+							"align": "left",
+							"backgroundColor": "#F7F7F7",
+							"borderRadius": "4px",
+							"disabled": true,
+							"placeholder": "智能积木 越野四驱车",
+							"placeholderColor": "#CCCCCC"
+						},
+						"buttons": [{
+							"color": "#989898",
+							"colorPressed": "#FD6801",
+							"float": "right",
+							"fontSize": "16px",
+							"text": "搜索"
+						}]
 					}
 				}
 			}

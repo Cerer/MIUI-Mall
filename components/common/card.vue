@@ -2,14 +2,16 @@
 	<!-- 卡片组件 -->
 	<view class="card">
 		<!-- head -->
-		<view v-if="showHead" class="p-2 border-bottom main-border-color">
+		<view v-if="showHead" class="p-2 main-border-color" :class="getHeadClass">
 			<slot name="title">
-				<text v-if="headTitle" class="font-md font-weight">{{ headTitle }}</text>
+				<text v-if="headTitle" class="font-md" :class="headTitleWeight ? 'font-weight' : ''">
+					{{ headTitle }}
+				</text>
 			</slot>
 		</view>
 
 		<!-- body -->
-		<view class="">
+		<view :class="getBodyClass">
 			<image v-if="bodyCover" :src="bodyCover" mode="widthFix" style="width: 100%;"></image>
 			<slot></slot>
 		</view>
@@ -21,9 +23,40 @@ export default {
 	props: {
 		headTitle: String,
 		bodyCover: String,
+
+		// 是否显示头部
 		showHead: {
 			type: Boolean,
 			default: true
+		},
+
+		// 标题是否显示下边线
+		headBorderBottom: {
+			type: Boolean,
+			default: true
+		},
+
+		// 标题是否加粗
+		headTitleWeight: {
+			type: Boolean,
+			default: true
+		},
+
+		bodyPadding: {
+			type: Boolean,
+			default: false
+		}
+	},
+
+	computed: {
+		getHeadClass() {
+			let BorderBottom = this.headBorderBottom ? 'border-bottom' : '';
+			return `${BorderBottom}`;
+		},
+
+		getBodyClass() {
+			let BodyPadding = this.bodyPadding ? 'p-2' : '';
+			return `${BodyPadding}`;
 		}
 	}
 };
