@@ -24,13 +24,18 @@
 			<view class="flex-1 all-flex-row font-md main-text-color" @click="clickRDrawer('open')">筛选</view>
 		</view>
 
-		<!-- 抽屉 -->
+		<!-- 列表 -->
+		<block v-for="(item, index) of list" :key="index">
+			<search-list :item="item" :index="index"></search-list>
+		</block>
+
+		<!-- 筛选抽屉 -->
 		<uni-drawer ref="showRight" mode="right" :width="280">
 			<card headTitle="服务" :headBorderBottom="false" :headTitleWeight="false"></card>
 
 			<!-- 单选按钮 -->
 			<radio-groups :label="label" :selectIndex.sync="label.selectIndex"></radio-groups>
-			
+
 			<!-- 按钮 -->
 			<view class="d-flex position-fixed bottom-0 right-0 w-100 font-md border-top border-light-secondary">
 				<view class="flex-1 main-bg-color text-white text-center py-2" hover-class="main-bg-hover-color">
@@ -45,13 +50,15 @@
 <script>
 import card from '@/components/common/card.vue';
 import uniDrawer from '@/components/uni-ui/uni-drawer/uni-drawer.vue';
-import radioGroups from "@/components/common/radio-group.vue"
+import radioGroups from '@/components/common/radio-group.vue';
+import searchList from '@/components/search-list/search-list.vue';
 
 export default {
 	components: {
 		uniDrawer,
 		card,
-		radioGroups
+		radioGroups,
+		searchList
 	},
 	data() {
 		return {
@@ -77,7 +84,58 @@ export default {
 			label: {
 				selectIndex: 0,
 				list: [{ name: '选项一' }, { name: '选项二' }, { name: '选项三' }]
-			}
+			},
+
+			list: [
+				{
+					title: '真无线蓝牙耳机',
+					titlePic: '/static/images/list/4.jpg',
+					desc: '雅致简约 / 分体式入耳 / 收纳盒充电 / 蓝牙5.0 / 触控操作',
+					pPrice: 100,
+					comment_num: 1300,
+					good_num: '98%'
+				},
+				{
+					title: '真无线蓝牙耳机',
+					titlePic: '/static/images/list/5.jpg',
+					desc: '雅致简约 / 分体式入耳 / 收纳盒充电 / 蓝牙5.0 / 触控操作',
+					pPrice: 100,
+					comment_num: 1300,
+					good_num: '98%'
+				},
+				{
+					title: '真无线蓝牙耳机',
+					titlePic: '/static/images/list/6.jpg',
+					desc: '雅致简约 / 分体式入耳 / 收纳盒充电 / 蓝牙5.0 / 触控操作',
+					pPrice: 100,
+					comment_num: 1300,
+					good_num: '98%'
+				},
+				{
+					title: '真无线蓝牙耳机',
+					titlePic: '/static/images/list/4.jpg',
+					desc: '雅致简约 / 分体式入耳 / 收纳盒充电 / 蓝牙5.0 / 触控操作',
+					pPrice: 100,
+					comment_num: 1300,
+					good_num: '98%'
+				},
+				{
+					title: '真无线蓝牙耳机',
+					titlePic: '/static/images/list/5.jpg',
+					desc: '雅致简约 / 分体式入耳 / 收纳盒充电 / 蓝牙5.0 / 触控操作',
+					pPrice: 100,
+					comment_num: 1300,
+					good_num: '98%'
+				},
+				{
+					title: '真无线蓝牙耳机',
+					titlePic: '/static/images/list/6.jpg',
+					desc: '雅致简约 / 分体式入耳 / 收纳盒充电 / 蓝牙5.0 / 触控操作',
+					pPrice: 100,
+					comment_num: 1300,
+					good_num: '98%'
+				}
+			]
 		};
 	},
 
