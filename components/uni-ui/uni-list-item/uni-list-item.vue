@@ -18,7 +18,7 @@
 				</slot>
 				
 				<!-- 自定义 -->
-				<slot></slot>
+				<!-- <slot></slot> -->
 				
 				<slot name="body">
 					<view class="uni-list-item__content" :class="{ 'uni-list-item__content--center': thumb || showExtraIcon || showBadge || showSwitch }">

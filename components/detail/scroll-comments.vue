@@ -23,7 +23,7 @@
 					<view class="iconfont icon-dianzan1 font text-linght-muted pl-1 ml-auto">{{ item.goods_num }}</view>
 				</view>
 
-				<text class="d-block font-md mb-2" style="white-space:normal">{{ item.content }}</text>
+				<text class="d-block font-md mb-2 line-h-sm" style="white-space:normal">{{ item.content }}</text>
 
 				<view class="row">
 					<view class="span24-8 px-2" v-for="(item2, index2) of item.imgList" :key="index2">
@@ -33,10 +33,12 @@
 			</view>
 		</scroll-view>
 
-		<view class="all-flex-row py-2 mt-2 text-primary" hover-class="bg-linght-muted">
-			更多内容
-			<view class="iconfont icon-you"></view>
-		</view>
+		<navigator url="/pages/detail-comment/detail-comment">
+			<view class="all-flex-row py-2 mt-2 text-primary" hover-class="bg-linght-muted">
+				更多评论
+				<view class="iconfont icon-you"></view>
+			</view>
+		</navigator>
 	</view>
 </template>
 

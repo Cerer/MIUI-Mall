@@ -146,6 +146,18 @@
 					}
 				}
 			}
+		},
+
+		// 商品评论
+		{
+			"path": "pages/detail-comment/detail-comment",
+			"style": {
+				"navigationBarTitleText": "商品评价",
+				"app-plus": {
+					"scrollIndicator": "none",
+					"bounce": "none"
+				}
+			}
 		}
 	],
 	"globalStyle": {

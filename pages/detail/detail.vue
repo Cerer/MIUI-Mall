@@ -12,32 +12,38 @@
 		<!-- 属性选择 -->
 		<view class="p-2">
 			<view class="rounded border bg-linght-muted">
-				<uni-list-item showArrow clickable @click="show">
-					<view class="d-flex font">
-						<text class="mr-2 text-muted">已选</text>
-						<text>火焰红 64G 标配</text>
+				<uni-list-item showArrow clickable @click="show('attr')">
+					<view slot="body">
+						<view class="d-flex font">
+							<text class="mr-2 text-muted">已选</text>
+							<text>火焰红 64G 标配</text>
+						</view>
 					</view>
 				</uni-list-item>
-				<uni-list-item showArrow clickable>
-					<view class="d-flex font">
-						<text class="text-muted">配送</text>
-						<text class="mx-2">北京 东城区</text>
-						<text class="main-text-color">现配</text>
+				<uni-list-item showArrow clickable @click="show('express')">
+					<view slot="body">
+						<view class="d-flex font">
+							<text class="text-muted">配送</text>
+							<text class="mx-2">北京 东城区</text>
+							<text class="main-text-color">现配</text>
+						</view>
 					</view>
 				</uni-list-item>
-				<uni-list-item showArrow clickable>
-					<view class="d-flex font">
-						<view class="text-muted d-flex a-center mr-2">
-							<view class="iconfont icon-finish main-text-color"></view>
-							小米自营
-						</view>
-						<view class="text-muted d-flex a-center mr-2">
-							<view class="iconfont icon-finish main-text-color"></view>
-							小米发货
-						</view>
-						<view class="text-muted d-flex a-center mr-2">
-							<view class="iconfont icon-finish main-text-color"></view>
-							7天无理由退货
+				<uni-list-item showArrow clickable @click="show('service')">
+					<view slot="body">
+						<view class="d-flex font">
+							<view class="text-muted d-flex a-center mr-2">
+								<view class="iconfont icon-finish main-text-color"></view>
+								小米自营
+							</view>
+							<view class="text-muted d-flex a-center mr-2">
+								<view class="iconfont icon-finish main-text-color"></view>
+								小米发货
+							</view>
+							<view class="text-muted d-flex a-center mr-2">
+								<view class="iconfont icon-finish main-text-color"></view>
+								7天无理由退货
+							</view>
 						</view>
 					</view>
 				</uni-list-item>
@@ -62,8 +68,105 @@
 		<!-- 底部操作条 -->
 		<bottom-btn></bottom-btn>
 
-		<!-- 弹出框 -->
-		<com-popup :popupClass="popupClass" @hide="hide"></com-popup>
+		<!-- 选项卡弹出框 -->
+		<com-popup :popupClass="popup.attr" @hide="hide('attr')">
+			<!-- 商品信息 -->
+			<view class="d-flex a-center" style="height: 275rpx;">
+				<image
+					src="/static/images/cate/cate_01.png"
+					mode="widthFix"
+					style="width: 180rpx;height: 180rpx;"
+					class="border rounded"
+				></image>
+				<view class="pl-2">
+					<price priceSize="font-lg" unitSize="font">3369</price>
+					<text class="d-block">火焰红 64G 标配</text>
+				</view>
+			</view>
+
+			<!-- 表单部分 -->
+			<scroll-view scroll-y class="w-100" style="height: 660rpx;">
+				<card
+					v-for="(item, index) in selects"
+					:key="index"
+					:headTitle="item.title"
+					:headTitleWeight="false"
+					:headBorderBottom="false"
+				>
+					<radio-groups :label="item" :selectIndex.sync="item.selectIndex"></radio-groups>
+				</card>
+
+				<view class="d-flex j-sb a-center p-2 border-top border-light-secondary">
+					<text>购买数量</text>
+					<uni-number-box :min="1" :value="detail.num" @change="detail.num = $event"></uni-number-box>
+				</view>
+			</scroll-view>
+
+			<!-- 按钮 -->
+			<view
+				class="main-bg-color text-white font-md all-flex-row"
+				hover-class="main-bg-hover-color"
+				style="height: 100rpx;margin-left: -30rpx;margin-right: -30rpx;"
+				@tap.stop="hide('attr')"
+			>
+				加入购物车
+			</view>
+		</com-popup>
+
+		<!-- 收货地址弹出框 -->
+		<com-popup :popupClass="popup.express" @hide="hide('express')">
+			<view class="all-flex-row font-md border-bottom border-light-secondary font-weight" style="height: 100rpx;">
+				收货地址
+			</view>
+
+			<!-- 表单部分 -->
+			<scroll-view scroll-y class="w-100" style="height: 835rpx;">
+				<uni-list-item showArrow v-for="i in 10" :key="i">
+					<view slot="body">
+						<view class="iconfont icon-27 font-md font-weight">关关雎鸠</view>
+						<view class="font text-linght-muted d-block">广东省广州市工作室</view>
+					</view>
+				</uni-list-item>
+			</scroll-view>
+
+			<!-- 按钮 -->
+			<view
+				class="main-bg-color text-white font-md all-flex-row"
+				hover-class="main-bg-hover-color"
+				style="height: 100rpx;margin-left: -30rpx;margin-right: -30rpx;"
+				@tap.stop="hide('express')"
+			>
+				选择新地址
+			</view>
+		</com-popup>
+
+		<!-- 服务说明弹出框 -->
+		<com-popup :popupClass="popup.service" @hide="hide('service')">
+			<view class="all-flex-row font-md border-bottom border-light-secondary font-weight" style="height: 100rpx;">
+				服务说明
+			</view>
+
+			<!-- 表单部分 -->
+			<scroll-view scroll-y class="w-100" style="height: 835rpx;">
+				<view class="py-1" v-for="(item, index) of serviceList" :key="index">
+					<view class="d-flex a-center">
+						<view class="iconfont icon-finish main-text-color mr-1"></view>
+						{{ item.title }}
+					</view>
+					<text v-if="item.desc" class="text-linght-muted font pl-4">{{ item.desc }}</text>
+				</view>
+			</scroll-view>
+
+			<!-- 按钮 -->
+			<view
+				class="main-bg-color text-white font-md all-flex-row"
+				hover-class="main-bg-hover-color"
+				style="height: 100rpx;margin-left: -30rpx;margin-right: -30rpx;"
+				@tap.stop="hide('service')"
+			>
+				确定
+			</view>
+		</com-popup>
 	</view>
 </template>
 
@@ -78,6 +181,9 @@ import card from '@/components/common/card.vue';
 import comList from '@/components/common/com-list.vue';
 import bottomBtn from '@/components/detail/bottom-btn.vue';
 import comPopup from '@/components/common/com-popup.vue';
+import price from '@/components/common/price.vue';
+import radioGroups from '@/components/common/radio-group.vue';
+import uniNumberBox from '@/components/uni-ui/uni-number-box/uni-number-box.vue';
 
 var htmlString = `
 <p>
@@ -102,12 +208,20 @@ export default {
 		card,
 		comList,
 		bottomBtn,
-		comPopup
+		comPopup,
+		price,
+		radioGroups,
+		uniNumberBox
 	},
 
 	data() {
 		return {
-			popupClass: 'none',
+			popup: {
+				attr: 'none',
+				express: 'none',
+				service: 'none'
+			},
+
 			banners: [
 				{
 					src: '/static/images/detail/1.webp'
@@ -120,7 +234,9 @@ export default {
 			detail: {
 				title: '小米MIX3 6GB+128GB',
 				desc: '磁动力滑盖全面屏 / 前后旗舰AI双摄 / 四曲面彩色陶瓷机身 / 高效10W无线充电',
-				pPrice: 3299
+				pPrice: 3299,
+				num: 1,
+				max: 100
 			},
 
 			baseAttrs: [
@@ -224,8 +340,57 @@ export default {
 					oPrice: 2699,
 					pPrice: 1366
 				}
+			],
+
+			// 选项卡单选按钮数据
+			selects: [
+				{
+					title: '颜色',
+					selectIndex: 0,
+					list: [{ name: '黄色' }, { name: '黑色' }, { name: '红色' }]
+				},
+				{
+					title: '容量',
+					selectIndex: 0,
+					list: [{ name: '64GB' }, { name: '128GB' }]
+				},
+				{
+					title: '套餐',
+					selectIndex: 0,
+					list: [{ name: '标配' }, { name: '套餐一' }, { name: '套餐二' }]
+				}
+			],
+
+			serviceList: [
+				{
+					title: '小米自营',
+					desc: ''
+				},
+				{
+					title: '小米发货',
+					desc: '由小米发货'
+				},
+				{
+					title: '7天无理由就是不退货',
+					desc: ''
+				},
+				{
+					title: '运费说明',
+					desc: '不管满多少，就是不退货；特殊产品，也是一样'
+				}
 			]
 		};
+	},
+
+	// 监听页面返回事件
+	onBackPress() {
+		// 关闭模态框
+		for (let key in this.popup) {
+			if (this.popup[key] !== 'none') {
+				this.popup[key] = 'none';
+				return true;
+			}
+		}
 	},
 
 	methods: {
@@ -239,15 +404,15 @@ export default {
 			// do something
 		},
 		// 点击显示弹框
-		show() {
-			this.popupClass = 'show';
+		show(key) {
+			this.popup[key] = 'show';
 		},
 
 		// 隐藏弹框
-		hide() {
-			this.popupClass = 'hide';
+		hide(key) {
+			this.popup[key] = 'hide';
 			setTimeout(() => {
-				this.popupClass = 'none';
+				this.popup[key] = 'none';
 			}, 200);
 		}
 	}
