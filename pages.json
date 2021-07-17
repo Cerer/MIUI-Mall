@@ -68,7 +68,13 @@
 		// 购物车
 		{
 			"path": "pages/cart/cart",
-			"style": {}
+			"style": {
+				"app-plus": {
+					"titleNView": false,
+					"scrollIndicator": "none",
+					"bounce": "none"
+				}
+			}
 		},
 
 		// 我的

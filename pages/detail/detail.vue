@@ -66,7 +66,7 @@
 		</card>
 
 		<!-- 底部操作条 -->
-		<bottom-btn></bottom-btn>
+		<bottom-btn @show="show('attr')"></bottom-btn>
 
 		<!-- 选项卡弹出框 -->
 		<com-popup :popupClass="popup.attr" @hide="hide('attr')">
@@ -98,7 +98,12 @@
 
 				<view class="d-flex j-sb a-center p-2 border-top border-light-secondary">
 					<text>购买数量</text>
-					<uni-number-box :min="1" :value="detail.num" @change="detail.num = $event"></uni-number-box>
+					<uni-number-box
+						:min="detail.minNum"
+						:max="detail.maxNum"
+						:value="detail.num"
+						@change="detail.num = $event"
+					></uni-number-box>
 				</view>
 			</scroll-view>
 
@@ -107,7 +112,7 @@
 				class="main-bg-color text-white font-md all-flex-row"
 				hover-class="main-bg-hover-color"
 				style="height: 100rpx;margin-left: -30rpx;margin-right: -30rpx;"
-				@tap.stop="hide('attr')"
+				@tap.stop="addCart"
 			>
 				加入购物车
 			</view>
@@ -171,6 +176,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 import comSwiper from '@/components/index/com-swiper.vue';
 import detailInfo from '@/components/detail/detail-info.vue';
 import scrollAttrs from '@/components/detail/scroll-attrs.vue';
@@ -232,11 +238,14 @@ export default {
 			],
 
 			detail: {
+				id: '10',
 				title: '小米MIX3 6GB+128GB',
 				desc: '磁动力滑盖全面屏 / 前后旗舰AI双摄 / 四曲面彩色陶瓷机身 / 高效10W无线充电',
 				pPrice: 3299,
 				num: 1,
-				max: 100
+				minNum: 1,
+				maxNum: 100,
+				cover: '/static/images/list/1.jpg'
 			},
 
 			baseAttrs: [
@@ -394,6 +403,8 @@ export default {
 	},
 
 	methods: {
+		...mapMutations(['addGoodsToCart']),
+
 		// 点击详情图预览
 		preview(src, e) {
 			// do something
@@ -414,6 +425,26 @@ export default {
 			setTimeout(() => {
 				this.popup[key] = 'none';
 			}, 200);
+		},
+
+		// 加入购物车
+		addCart() {
+			// 组织数据
+			let goods = this.detail;
+			goods['checked'] = false;
+			goods['attrs'] = this.selects;
+
+			// 加入购物车
+			this.addGoodsToCart(goods);
+
+			// 隐藏筛选框
+			this.hide('attr');
+
+			// 成功提示
+			uni.showToast({
+				title: '加入成功',
+				icon: 'none'
+			});
 		}
 	}
 };

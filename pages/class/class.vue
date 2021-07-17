@@ -160,7 +160,7 @@ export default {
 		// 监听右边滚动事件
 		async onRightScroll(e) {
 			this.rightDomsTop.forEach((i, k) => {
-				if (i < e.detail.scrollTop) {
+				if (i < e.detail.scrollTop + 3) {
 					this.activeIndex = k;
 					return false;
 				}

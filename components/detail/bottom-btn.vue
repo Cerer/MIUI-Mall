@@ -9,7 +9,7 @@
 				<view class="iconfont icon-xihuan text-muted line-h-md"></view>
 				收藏
 			</view>
-			<view class="flex-1 all-flex-column line-h-md" hover-class="bg-linght-muted">
+			<view class="flex-1 all-flex-column line-h-md" hover-class="bg-linght-muted" @tap="toCart">
 				<view class="iconfont icon-gouwuche text-muted line-h-md"></view>
 				购物车
 			</view>
@@ -17,6 +17,7 @@
 				class="all-flex-row font-md main-bg-color text-white"
 				hover-class="main-bg-hover-color"
 				style="flex: 2.5;"
+				@tap="$emit('show')"
 			>
 				加入购物车
 			</view>
@@ -24,6 +25,17 @@
 	</view>
 </template>
 
-<script></script>
+<script>
+export default {
+	methods: {
+		// 跳转到购物车
+		toCart() {
+			uni.switchTab({
+				url: '/pages/cart/cart'
+			});
+		}
+	}
+};
+</script>
 
 <style></style>
