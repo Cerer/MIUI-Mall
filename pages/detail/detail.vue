@@ -126,10 +126,10 @@
 
 			<!-- 表单部分 -->
 			<scroll-view scroll-y class="w-100" style="height: 835rpx;">
-				<uni-list-item showArrow v-for="i in 10" :key="i">
+				<uni-list-item showArrow v-for="(item, index) in pathList" :key="index">
 					<view slot="body">
-						<view class="iconfont icon-27 font-md font-weight">关关雎鸠</view>
-						<view class="font text-linght-muted d-block">广东省广州市工作室</view>
+						<view class="iconfont icon-27 font-md font-weight">{{ item.name }}</view>
+						<view class="font text-linght-muted d-block">{{ item.path }} {{ item.detailPath }}</view>
 					</view>
 				</uni-list-item>
 			</scroll-view>
@@ -139,7 +139,7 @@
 				class="main-bg-color text-white font-md all-flex-row"
 				hover-class="main-bg-hover-color"
 				style="height: 100rpx;margin-left: -30rpx;margin-right: -30rpx;"
-				@tap.stop="hide('express')"
+				@tap.stop="openCreatePath"
 			>
 				选择新地址
 			</view>
@@ -176,7 +176,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import comSwiper from '@/components/index/com-swiper.vue';
 import detailInfo from '@/components/detail/detail-info.vue';
 import scrollAttrs from '@/components/detail/scroll-attrs.vue';
@@ -218,6 +218,12 @@ export default {
 		price,
 		radioGroups,
 		uniNumberBox
+	},
+
+	computed: {
+		...mapState({
+			pathList: state => state.path.list
+		})
 	},
 
 	data() {
@@ -445,6 +451,14 @@ export default {
 				title: '加入成功',
 				icon: 'none'
 			});
+		},
+
+		// 新增地址
+		openCreatePath() {
+			uni.navigateTo({
+				url: '/pages/user-path-edit/user-path-edit'
+			});
+			this.hide('express');
 		}
 	}
 };

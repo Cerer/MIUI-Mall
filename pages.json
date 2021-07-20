@@ -96,6 +96,48 @@
 			}
 		},
 
+		// 我的--设置--个人资料
+		{
+			"path": "pages/user-userInfo/user-userInfo",
+			"style": {
+				"navigationBarTitleText": "修改资料"
+			}
+		},
+
+		// 我的--设置--收货地址
+		{
+			"path": "pages/user-path-list/user-path-list",
+			"style": {
+				"navigationBarTitleText": "收货地址",
+				"app-plus": {
+					"scrollIndicator": "none",
+					"bounce": "none",
+					"titleNView": {
+						"buttons": [{
+							"float": "right",
+							"color": "#999999",
+							"colorPressed": "#BBBBBB",
+							"fontSrc": "/static/font/iconfont.ttf",
+							"text": "\ue65c",
+							"fontSize": "18px"
+						}]
+					}
+				}
+			}
+		},
+
+		// 我的--设置--收货地址
+		{
+			"path": "pages/user-path-edit/user-path-edit",
+			"style": {
+				"navigationBarTitleText": "新增收货地址",
+				"app-plus": {
+					"scrollIndicator": "none",
+					"bounce": "none"
+				}
+			}
+		},
+
 
 		// 搜索
 		{

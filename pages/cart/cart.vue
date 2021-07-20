@@ -68,14 +68,26 @@
 				</view>
 			</view>
 		</view>
-		
+
+		<!-- 为你推荐 -->
+		<view class="text-center main-text-color font-md font-weight mt-4">为你推荐</view>
+
+		<view class="position-relative all-flex-row text-secondary mb-3 py-3">
+			<view class="font position-absolute px-2" style="background: #F5F5F5;z-index: 2;">买的人还买了</view>
+			<view class="position-absolute left-0 right-0 bg-dark" style="height: 1rpx;"></view>
+		</view>
+
+		<view class="row j-sb bg-white">
+			<com-list v-for="(item, index) of hotList" :key="index" :item="item" :index="index"></com-list>
+		</view>
+
 		<!-- 占位 -->
 		<view style="height: 200rpx;"></view>
 
 		<!-- 合计 -->
 		<view
-			class="d-flex a-center position-fixed right-0 left-0 border-top border-dark a-stretch bg-white"
-			style="height: 100rpx;z-index: 1000;bottom: 100rpx;"
+			class="d-flex a-center position-fixed right-0 left-0 border-top border-dark a-stretch bg-white h5-bottom-0 app-bottom-100"
+			style="height: 100rpx;z-index: 1000;"
 		>
 			<label class="radio all-flex-row flex-shrink" style="width: 100rpx;" @click="doSelectedAll">
 				<radio color="#FD6801" :checked="checkedAll" :disabled="disabledSelectAll"></radio>
@@ -168,6 +180,7 @@ import uniNumberBox from '@/components/uni-ui/uni-number-box/uni-number-box.vue'
 import comPopup from '@/components/common/com-popup.vue';
 import card from '@/components/common/card.vue';
 import radioGroups from '@/components/common/radio-group.vue';
+import comList from '@/components/common/com-list.vue';
 export default {
 	components: {
 		uniNavBar,
@@ -175,7 +188,8 @@ export default {
 		uniNumberBox,
 		comPopup,
 		card,
-		radioGroups
+		radioGroups,
+		comList
 	},
 
 	computed: {
@@ -189,7 +203,37 @@ export default {
 
 	data() {
 		return {
-			isEdit: false
+			isEdit: false,
+			hotList: [
+				{
+					cover: '/static/images/list/1.jpg',
+					title: '米家空调',
+					desc: '1.5匹频率',
+					oPrice: 2699,
+					pPrice: 1366
+				},
+				{
+					cover: '/static/images/list/1.jpg',
+					title: '米家空调',
+					desc: '1.5匹频率',
+					oPrice: 2699,
+					pPrice: 1366
+				},
+				{
+					cover: '/static/images/list/1.jpg',
+					title: '米家空调',
+					desc: '1.5匹频率',
+					oPrice: 2699,
+					pPrice: 1366
+				},
+				{
+					cover: '/static/images/list/1.jpg',
+					title: '米家空调',
+					desc: '1.5匹频率',
+					oPrice: 2699,
+					pPrice: 1366
+				}
+			]
 		};
 	},
 
@@ -203,8 +247,22 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 page {
 	background: #f5f5f5;
 }
+</style>
+
+<style scoped>
+/* #ifdef APP-PLUS */
+.h5-bottom-0 {
+	bottom: 0;
+}
+/* #endif */
+
+/* #ifdef H5 */
+.app-bottom-100 {
+	bottom: 100rpx;
+}
+/* #endif */
 </style>

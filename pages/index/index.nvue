@@ -1,15 +1,36 @@
 <template>
+	<!-- 有问题slider -->
 	<div>
-		<text>111111</text>
+		<!-- 轮播图 -->
+		<slider class="slider" auto-play :interval="3000">
+			<div class="position-relative">
+				<image class="image" src="../../static/images/index/banner/1.jpg" resize="cover"></image>
+				<image class="image" src="../../static/images/index/banner/1.jpg" resize="cover"></image>
+				<image class="image" src="../../static/images/index/banner/1.jpg" resize="cover"></image>
+				<indicator class="indicator"></indicator>
+			</div>
+		</slider>
 	</div>
 </template>
 
 <script>
-	export default {
-		
-	}
+export default {};
 </script>
 
 <style>
+.slider .image {
+	width: 750rpx;
+	height: 300rpx;
+}
 
+.indicator {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 150rpx;
+	height: 50rpx;
+	background-color: rgba(0, 0, 0, 0);
+	item-color: rgba(255, 255, 255, 0.5);
+	item-selected-color: #ffffff;
+}
 </style>

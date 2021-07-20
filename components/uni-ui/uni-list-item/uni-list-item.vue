@@ -30,15 +30,12 @@
 								v-else
 								class="iconfont"
 								:class="extraIcon.type"
-								:style="{ 'color': extraIcon.color }"
+								:style="{ color: extraIcon.color }"
 								:size="extraIcon.size"
 							></view>
 						</view>
 					</view>
 				</slot>
-
-				<!-- 自定义 -->
-				<!-- <slot></slot> -->
 
 				<slot name="body">
 					<view
@@ -66,6 +63,7 @@
 						<uni-badge v-if="showBadge" :type="badgeType" :text="badgeText" />
 						<switch
 							v-if="showSwitch"
+							:color="switchColor"
 							:disabled="disabled"
 							:checked="switchChecked"
 							@change="onSwitchChange"
@@ -170,6 +168,10 @@ export default {
 		switchChecked: {
 			type: [Boolean, String],
 			default: false
+		},
+		switchColor: {
+			type: [String],
+			default: ''
 		},
 		badgeText: {
 			type: String,
