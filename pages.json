@@ -220,6 +220,36 @@
 					"bounce": "none"
 				}
 			}
+		},
+
+		// 我的订单
+		{
+			"path": "pages/order/order",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"app-plus": {
+					"scrollIndicator": "none",
+					"titleNView": {
+						"buttons": [{
+								"float": "right",
+								"color": "#999999",
+								"colorPressed": "#BBBBBB",
+								"fontSrc": "/static/font/iconfont.ttf",
+								"text": "\ue60c",
+								"fontSize": "18px"
+							},
+							{
+								"float": "right",
+								"color": "#999999",
+								"colorPressed": "#BBBBBB",
+								"fontSrc": "/static/font/iconfont.ttf",
+								"text": "\ue65e",
+								"fontSize": "18px"
+							}
+						]
+					}
+				}
+			}
 		}
 	],
 	"globalStyle": {

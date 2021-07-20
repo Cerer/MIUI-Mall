@@ -12,6 +12,7 @@ image {
 .scroll-row-item {
 	display: inline-block;
 }
+
 /* scroll-view x end */
 
 body {
@@ -41,6 +42,7 @@ body {
 .shadow-lg {
 	box-shadow: 0 16upx 48upx rgba(114, 130, 138, 0.2) !important;
 }
+
 /* 阴影end */
 
 /* 定位start */
@@ -92,6 +94,13 @@ body {
 	right: 0;
 }
 
+.all-direction-0 {
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
 
 /* 定位end */
 
@@ -111,6 +120,7 @@ body {
 .h-50 {
 	height: 1625upx;
 }
+
 /* 宽高end */
 
 /* 字体start */
@@ -141,6 +151,7 @@ body {
 .font-weight-100 {
 	font-weight: 100 !important;
 }
+
 /* 字体end */
 
 /* 行高start */
@@ -171,6 +182,7 @@ body {
 .line-h-through {
 	text-decoration: line-through;
 }
+
 /* 行高end */
 
 /* 字体布局start */
@@ -185,6 +197,7 @@ body {
 .text-right {
 	text-align: right;
 }
+
 /* 字体布局end */
 
 /* 栅栏布局start */
@@ -429,6 +442,7 @@ body {
 .span24-24 {
 	width: 100%;
 }
+
 /* 栅栏布局end */
 
 /* flex布局start */
@@ -538,6 +552,7 @@ body {
 .a-self-baseline {
 	align-self: baseline;
 }
+
 /* flex布局end */
 
 /* 边框start */
@@ -1240,6 +1255,7 @@ body {
 .pr-5 {
 	padding-right: 50upx;
 }
+
 /* 内边距end */
 
 /* 边距end */
@@ -1249,4 +1265,5 @@ body {
 	height: 18upx;
 	background: #F5F5F5;
 }
+
 /* 分割线end */

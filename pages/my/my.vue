@@ -28,7 +28,7 @@
 		<card>
 			<view slot="title" class="d-flex a-center j-sb">
 				<text class="font-md font-weight">我的订单</text>
-				<view class="text-secondary font">
+				<view class="text-secondary font" @click="navigate('order')">
 					全部订单
 					<text class="iconfont icon-you font"></text>
 				</view>
@@ -152,6 +152,11 @@ export default {
 	},
 
 	methods: {
+		navigate(path) {
+			uni.navigateTo({
+				url: `/pages/${path}/${path}`
+			});
+		}
 	}
 };
 </script>
