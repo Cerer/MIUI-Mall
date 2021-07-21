@@ -1,4 +1,5 @@
 <template>
+	<!-- 我的 -->
 	<view>
 		<!-- 头部 -->
 		<view class="position-relative d-flex a-center" style="height: 320rpx;">
@@ -13,7 +14,8 @@
 					style="width: 145rpx;height: 145rpx;border: 5rpx solid #f8f9fa;"
 					class="rounded-circle ml-4"
 				></image>
-				<view class="ml-2 text-white font-md">关关雎鸠</view>
+				<navigator url="../login/login"><view class="ml-2 text-white font-md">关关雎鸠</view></navigator>
+
 				<view
 					class="all-flex-row a-self-end ml-auto px-2"
 					style="height: 70rpx;background: #FFD43F;color: #CC4A00;border-top-left-radius: 40rpx;border-bottom-left-radius: 40rpx;"

@@ -1,4 +1,5 @@
 <template>
+	<!-- 搜索页点击进去的商品列表 -->
 	<view>
 		<!-- 排序|筛选 -->
 		<view class="d-flex border-top border-bottoms" style="height: 100upx;">

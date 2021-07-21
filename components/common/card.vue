@@ -42,9 +42,16 @@ export default {
 			default: true
 		},
 
+		// 是否给内边距
 		bodyPadding: {
 			type: Boolean,
 			default: false
+		},
+
+		// 样式
+		cardStyle: {
+			type: String,
+			default: ''
 		}
 	},
 

@@ -1,4 +1,5 @@
 <template>
+	<!-- 设置 -->
 	<view class="">
 		<card v-for="(item, index) in list" :key="index" :headTitle="item.label">
 			<uni-list-item

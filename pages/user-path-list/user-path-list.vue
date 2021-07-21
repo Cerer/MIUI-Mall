@@ -4,7 +4,7 @@
 		<block v-for="(item, index) in list" :key="index">
 			<uni-swipe-action :right-options="options">
 				<uni-swipe-action-item :right-options="options" @click="bindClick($event, index)">
-					<uni-list-item showArrow>
+					<uni-list-item showArrow @click="choose(item)" clickable>
 						<view slot="body" style="font-size: 28rpx;">
 							<view class="text-secondary">
 								<view class="d-flex a-center">
@@ -50,10 +50,16 @@ export default {
 			});
 		}
 	},
-	onLoad() {},
+
+	onLoad(e) {
+		if (e.type === 'choose') {
+			this.isChoose = true;
+		}
+	},
 
 	data() {
 		return {
+			isChoose: false,
 			options: [
 				{
 					text: '修改',
@@ -89,6 +95,19 @@ export default {
 				case 1: //删除
 					this.doDelPath(index);
 					break;
+			}
+		},
+
+		//点击选择收货地址
+		choose(item) {
+			if (this.isChoose) {
+				//通知订单提交修改收货地址
+				uni.$emit('chooesPath', item);
+
+				// 关闭当前页面
+				uni.navigateBack({
+					delta: 1
+				});
 			}
 		}
 	}

@@ -1,4 +1,5 @@
 <template>
+	<!-- 搜索页 -->
 	<view>
 		<card headTitle="热门搜索" bodyCover="/static/images/search/search-banner.png"></card>
 

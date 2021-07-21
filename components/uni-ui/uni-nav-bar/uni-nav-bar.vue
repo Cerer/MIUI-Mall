@@ -40,7 +40,7 @@
 
 <script>
 	import statusBar from "./uni-status-bar.vue";
-	import uniIcons from "../uni-icons/icons.js";
+	import uniIcons from "../uni-icons/uni-icons.vue";
 
 	/**
 	 * NavBar 自定义导航栏

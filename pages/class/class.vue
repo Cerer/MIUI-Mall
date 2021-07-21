@@ -1,4 +1,5 @@
 <template>
+	<!-- 分类 -->
 	<view class="d-flex border-top border-light-secondary" style="height: 100%;box-sizing: border-box;">
 		<loading :show="showLoading"></loading>
 

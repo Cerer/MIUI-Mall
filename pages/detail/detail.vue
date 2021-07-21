@@ -1,4 +1,5 @@
 <template>
+	<!-- 订单详情 -->
 	<view class="">
 		<!-- 商品详情大图 -->
 		<com-swiper :resdata="banners" height="750" :preview="true"></com-swiper>

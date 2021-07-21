@@ -1,4 +1,5 @@
 <template>
+	<!-- 商品评论页 -->
 	<view>
 		<view class="p-2">
 			<view class="d-flex a-center py-2 border-bottom border-light-secondary">

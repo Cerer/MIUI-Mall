@@ -5,7 +5,7 @@ export default {
 				phone: '130****5410',
 				path: '广州市 天河区 **街道',
 				detailPath: '**街道',
-				isDefault: true
+				isDefault: false
 			},
 			{
 				name: '关关雎鸠',

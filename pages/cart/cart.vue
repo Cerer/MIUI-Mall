@@ -1,4 +1,5 @@
 <template>
+	<!-- 购物车 -->
 	<view>
 		<!-- 顶部导航栏 -->
 		<uni-nav-bar
@@ -98,7 +99,11 @@
 					合计
 					<price>{{ totalPrice }}</price>
 				</view>
-				<view class="flex-1 all-flex-row main-bg-color text-white font-md" hover-class="main-bg-hover-color">
+				<view
+					class="flex-1 all-flex-row main-bg-color text-white font-md"
+					hover-class="main-bg-hover-color"
+					@tap="orderConfirm"
+				>
 					结算
 				</view>
 			</template>
@@ -242,7 +247,14 @@ export default {
 	methods: {
 		...mapMutations(['selectItem']),
 
-		...mapActions(['doShowPopup', 'doHidePopup', 'doSelectedAll', 'doDelGoods'])
+		...mapActions(['doShowPopup', 'doHidePopup', 'doSelectedAll', 'doDelGoods']),
+
+		// 订单结算
+		orderConfirm() {
+			uni.navigateTo({
+				url: '/pages/order-confirm/order-confirm'
+			});
+		}
 	}
 };
 </script>
