@@ -323,12 +323,21 @@ export default {
 			newsList: []
 		};
 	},
-	
+
 	// 点击搜索框
 	onNavigationBarSearchInputClicked() {
 		uni.navigateTo({
 			url: '/pages/search/search'
 		});
+	},
+
+	// 点击顶部按钮
+	onNavigationBarButtonTap(e) {
+		if (e.index === 0) {
+			uni.navigateTo({
+				url: '../msg-list/msg-list'
+			});
+		}
 	},
 
 	onLoad() {

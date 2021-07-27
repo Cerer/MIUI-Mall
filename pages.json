@@ -280,6 +280,46 @@
 					"titleNView": false
 				}
 			}
+		},
+
+		//消息通知
+		{
+			"path": "pages/msg-list/msg-list",
+			"style": {
+				"navigationBarTitleText": "消息列表"
+			}
+		},
+
+		// 消息通知详情
+		{
+			"path": "pages/msg-detail/msg-detail",
+			"style": {
+				"navigationBarTitleText": "消息详情"
+			}
+		},
+
+		// 支付方式
+		{
+			"path": "pages/pay-methods/pay-methods",
+			"style": {
+				"navigationBarTitleText": "选择支付方式"
+			}
+		},
+
+		//支付成功
+		{
+			"path": "pages/pay-result/pay-result",
+			"style": {
+				"navigationBarTitleText": "支付成功"
+			}
+		},
+
+		//优惠卷
+		{
+			"path": "pages/order-coupon/order-coupon",
+			"style": {
+				"navigationBarTitleText": "优惠卷"
+			}
 		}
 	],
 	"globalStyle": {

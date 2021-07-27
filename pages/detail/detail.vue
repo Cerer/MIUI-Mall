@@ -421,6 +421,7 @@ export default {
 		navigate(href, e) {
 			// do something
 		},
+		
 		// 点击显示弹框
 		show(key) {
 			this.popup[key] = 'show';

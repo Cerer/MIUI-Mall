@@ -1,7 +1,8 @@
 <template>
 	<!-- 分类 -->
 	<view class="d-flex border-top border-light-secondary" style="height: 100%;box-sizing: border-box;">
-		<loading :show="showLoading"></loading>
+		<!-- 处理初次加载页面出现短暂白屏问题 -->
+		<loading-plus v-if="beforeReady"></loading-plus>
 
 		<scroll-view
 			id="leftScroll"
@@ -40,7 +41,9 @@
 </template>
 
 <script>
+import loading from '@/common/mixin/loading.js';
 export default {
+	mixins: [loading],
 	data() {
 		return {
 			showLoading: true,

@@ -1,6 +1,9 @@
 <template>
 	<!-- 购物车 -->
 	<view>
+		<!-- 处理初次加载页面出现短暂白屏问题 -->
+		<loading-plus v-if="beforeReady"></loading-plus>
+
 		<!-- 顶部导航栏 -->
 		<uni-nav-bar
 			title="购物车"
@@ -179,6 +182,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
+import loading from '@/common/mixin/loading.js';
 import uniNavBar from '@/components/uni-ui/uni-nav-bar/uni-nav-bar.vue';
 import price from '@/components/common/price.vue';
 import uniNumberBox from '@/components/uni-ui/uni-number-box/uni-number-box.vue';
@@ -187,6 +191,8 @@ import card from '@/components/common/card.vue';
 import radioGroups from '@/components/common/radio-group.vue';
 import comList from '@/components/common/com-list.vue';
 export default {
+	mixins: [loading],
+
 	components: {
 		uniNavBar,
 		price,

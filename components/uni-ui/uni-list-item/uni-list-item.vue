@@ -30,8 +30,8 @@
 								v-else
 								class="iconfont"
 								:class="extraIcon.type"
-								:style="{ color: extraIcon.color }"
-								:size="extraIcon.size"
+								style="font-size: 60rpx;"
+								:style="{ color: extraIcon.color, fontSize: extraIcon.size + 'rpx' }"
 							></view>
 						</view>
 					</view>

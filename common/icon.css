@@ -12,6 +12,14 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-wxpay:before {
+	content: "\e611";
+}
+
+.icon-zhifubao:before {
+	content: "\e637";
+}
+
 .icon-paixujiantoushang:before {
 	content: "\e7fe";
 }

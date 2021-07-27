@@ -54,7 +54,7 @@
 
 				<uni-list-item title="运费"><view slot="footer" class="font-md">包邮</view></uni-list-item>
 
-				<uni-list-item title="优惠卷" showArrow>
+				<uni-list-item title="优惠卷" showArrow clickable @tap="navigator('order-coupon')">
 					<view slot="footer" class="text-linght-muted font-md">无可用</view>
 				</uni-list-item>
 
@@ -79,6 +79,7 @@
 				class="px-4 py-1 main-bg-color text-white ml-2"
 				hover-class="main-bg-hover-color"
 				style="border-radius: 50rpx;"
+				@tap="openPayMethods"
 			>
 				去支付
 			</view>
@@ -137,6 +138,19 @@ export default {
 		openOrderInvoice() {
 			uni.navigateTo({
 				url: '/pages/order-invoice/order-invoice'
+			});
+		},
+
+		// 跳转到支付
+		openPayMethods() {
+			uni.navigateTo({
+				url: '/pages/pay-methods/pay-methods'
+			});
+		},
+
+		navigator(path) {
+			uni.navigateTo({
+				url: `/pages/${path}/${path}`
 			});
 		}
 	}

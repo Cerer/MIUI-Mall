@@ -1,12 +1,18 @@
 <template>
 	<!-- 我的 -->
 	<view>
+		<!-- 处理初次加载页面出现短暂白屏问题 -->
+		<loading-plus v-if="beforeReady"></loading-plus>
+
 		<!-- 头部 -->
 		<view class="position-relative d-flex a-center" style="height: 320rpx;">
+			<!-- 消息列表 -->
 			<view
 				class="iconfont icon-xiaoxi1 position-absolute text-white"
 				style="z-index: 100;font-size: 50rpx;top: 70rpx;right: 20rpx;"
+				@tap="navigate('msg-list')"
 			></view>
+
 			<image src="/static/images/my/bg.jpg" style="height: 320rpx;width: 100%;"></image>
 			<view class="d-flex a-center position-absolute left-0 right-0" style="bottom: 50rpx;">
 				<image
@@ -73,9 +79,12 @@
 </template>
 
 <script>
+import loading from '@/common/mixin/loading.js';
 import card from '@/components/common/card.vue';
 import uniListItem from '@/components/uni-ui/uni-list-item/uni-list-item.vue';
 export default {
+	mixins: [loading],
+
 	components: {
 		card,
 		uniListItem
