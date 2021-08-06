@@ -1,7 +1,7 @@
 <template>
-	<view class="bg-white">
+	<view class="bg-white" @click.stop="openDetail">
 		<view class="cutLine"></view>
-		
+
 		<!-- 头部 -->
 		<view class="d-flex a-center p-2 border-bottom border-light-secondary">
 			<text class="text-linght-muted font-md">{{ item.create_time }}</text>
@@ -10,29 +10,9 @@
 
 		<!-- 身体 -->
 		<view class="px-2">
-			<view
-				class="border-bottom d-flex a-center py-2 border-light-secondary"
-				v-for="(item2, index2) in item.order_items"
-				:key="index2"
-			>
-				<image
-					:src="item2.cover"
-					mode="widthFix"
-					style="width: 150rpx;height: 150rpx;"
-					class="rounded mx-2 flex-shrink"
-				></image>
-
-				<view class="flex-1">
-					<view class="d-flex a-center font-md">
-						<text class="text-dark">{{ item2.title }}</text>
-						<text class="text-linght-muted ml-auto">￥{{ item2.pPrice }}</text>
-					</view>
-					<view class="d-flex a-center font text-linght-muted">
-						<text class="">{{ item2.attrs }}</text>
-						<text class="ml-auto">x{{ item2.num }}</text>
-					</view>
-				</view>
-			</view>
+			<block v-for="(order, orderIndex) in item.order_items" :key="orderIndex">
+				<order-list-item :item="order" :index="orderIndex"></order-list-item>
+			</block>
 		</view>
 
 		<!-- 底部 -->
@@ -54,10 +34,23 @@
 </template>
 
 <script>
+import orderListItem from '@/components/order/order-list-item.vue';
 export default {
 	props: {
 		item: Object,
 		index: Number
+	},
+
+	components: {
+		orderListItem
+	},
+
+	methods: {
+		openDetail() {
+			uni.navigateTo({
+				url: '/pages/order-detail/order-detail'
+			});
+		}
 	}
 };
 </script>
