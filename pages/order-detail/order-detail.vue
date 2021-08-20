@@ -30,16 +30,40 @@
 			<view slot="body" class="font-md text-linght-muted">商品总价</view>
 			<view slot="footer" class="font-md text-linght-muted ml-auto">￥123.01</view>
 		</uni-list-item>
+		<uni-list-item>
+			<view slot="body" class="font-md text-linght-muted">快递</view>
+			<view slot="footer" class="font-md text-linght-muted ml-auto">￥10.00</view>
+		</uni-list-item>
+		<uni-list-item>
+			<view slot="body" class="font-md text-linght-muted">优惠卷</view>
+			<view slot="footer" class="font-md text-linght-muted ml-auto">-￥20.00</view>
+		</uni-list-item>
+		<uni-list-item>
+			<view slot="body" class="font-md main-text-color">实际付款</view>
+			<view slot="footer" class="font-md ml-auto"><price>110.00</price></view>
+		</uni-list-item>
+
+		<view class="cutLine"></view>
+
+		<card headTitle="订单信息">
+			<uni-list-item title="订单编号">
+				<view slot="footer" class="font-md text-linght-muted ml-auto">123456</view>
+			</uni-list-item>
+		</card>
 	</view>
 </template>
 
 <script>
 import orderListItem from '@/components/order/order-list-item.vue';
 import uniListItem from '@/components/uni-ui/uni-list-item/uni-list-item.vue';
+import price from '@/components/common/price.vue';
+import card from '@/components/common/card.vue';
 export default {
 	components: {
 		orderListItem,
-		uniListItem
+		uniListItem,
+		price,
+		card
 	},
 
 	data() {
