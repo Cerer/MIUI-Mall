@@ -331,6 +331,30 @@
 					"bounce": "none"
 				}
 			}
+		},
+		
+		// 查看物流
+		{
+			"path": "pages/logistics-detail/logistics-detail",
+			"style": {
+				"navigationBarTitleText": "物流信息"
+			}
+		},
+		
+		// 申请售后
+		{
+			"path": "pages/after-sale/after-sale",
+			"style": {
+				"navigationBarTitleText": "申请售后"
+			}
+		},
+		
+		// 关于商城
+		{
+			"path": "pages/about/about",
+			"style": {
+				"navigationBarTitleText": "关于商城"
+			}
 		}
 	],
 	"globalStyle": {

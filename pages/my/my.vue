@@ -75,6 +75,8 @@
 			title="更多设置"
 			:to="`/pages/user-set/user-set`"
 		></uni-list-item>
+		
+		<view style="height: 80rpx;"></view>
 	</view>
 </template>
 

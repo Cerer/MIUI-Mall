@@ -20,7 +20,18 @@
 			<text class="text-dark font-md ml-auto">共{{ item.totle_num }}件商品,合计: ￥{{ item.totle_price }}</text>
 		</view>
 		<view class="d-flex j-end a-center px-2 pb-2">
-			<view class="rounded border border-light-secondary px-2 py-1 text-secondary" hover-class="bg-linght-muted">
+			<view
+				class="rounded border border-light-secondary px-2 py-1 text-secondary"
+				hover-class="bg-linght-muted"
+				@click.stop="openAfterSale"
+			>
+				申请售后
+			</view>
+			<view
+				class="rounded border border-light-secondary px-2 py-1 text-secondary ml-2"
+				hover-class="bg-linght-muted"
+				@click.stop="openLogistics"
+			>
 				查看物流
 			</view>
 			<view
@@ -46,9 +57,24 @@ export default {
 	},
 
 	methods: {
+		// 打开详情
 		openDetail() {
 			uni.navigateTo({
 				url: '/pages/order-detail/order-detail'
+			});
+		},
+
+		// 查看物流
+		openLogistics() {
+			uni.navigateTo({
+				url: '/pages/logistics-detail/logistics-detail'
+			});
+		},
+
+		// 申请售后
+		openAfterSale() {
+			uni.navigateTo({
+				url: '/pages/after-sale/after-sale'
 			});
 		}
 	}
