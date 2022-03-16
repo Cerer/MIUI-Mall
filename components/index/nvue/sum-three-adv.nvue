@@ -1,0 +1,30 @@
+<!-- 三图广告 -->
+<template>
+	<div>
+		<div class="w-100 row">
+			<div class="col-6">
+				<image :src="resDate[0].src" style="width: 373px;height: 530px;"></image>
+			</div>
+			<div class="col-6 j-sb">
+				<image :src="resDate[1].src" style="width: 375px;height: 263.5px;"></image>
+				<image :src="resDate[2].src" style="width: 375px;height: 263.5px;"></image>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+export default {
+	props: {
+		resDate: {
+			type: Array,
+			default: function() {
+				return [];
+			}
+		}
+	}
+};
+</script>
+
+<style src="@/common/zcm-main-nvue.css"></style>
+<style></style>

@@ -1,0 +1,36 @@
+<!-- 分类图标组件 -->
+<template>
+	<div>
+		<div class="w-100 row px-2">
+			<div class="j-center a-center mt-3 index-navs mb-3" v-for="(item, index) in resData" :key="index">
+				<image class="index-navs-image" :src="item.src"></image>
+				<text class="font text-muted mt-1">{{ item.name }}</text>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+export default {
+	props: {
+		resData: {
+			type: Array,
+			default: function() {
+				return [];
+			}
+		}
+	}
+};
+</script>
+
+<style src="@/common/zcm-main-nvue.css"></style>
+<style scoped>
+.index-navs {
+	width: 142px;
+}
+
+.index-navs-image {
+	width: 58px;
+	height: 58px;
+}
+</style>
