@@ -1,0 +1,50 @@
+<!-- 商品列表 -->
+<template>
+	<div>
+		<div class="col-6 com-list mb-1">
+			<image class="con-list-image" :src="item.cover"></image>
+			<text class="font-md text-dark px-2 py-1 con-list-title">{{ item.title }}</text>
+			<text class="px-2 font text-muted con-list-desc">{{ item.desc }}</text>
+
+			<div class="px-2 pt-1 row a-end">
+				<price>{{ item.pPrice }}</price>
+				<text class="line-h-through text-muted ml-1">￥{{ item.oPrice }}</text>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+import price from '@/components/common/price.nvue';
+export default {
+	components: {
+		price
+	},
+
+	props: {
+		item: Object,
+		index: Number
+	}
+};
+</script>
+
+<style src="@/common/zcm-main-nvue.css"></style>
+<style scoped>
+.com-list {
+	padding-left: 2.5px;
+	padding-right: 2.5px;
+}
+
+.con-list-image {
+	width: 370px;
+	height: 370px;
+}
+
+.con-list-title {
+	lines: 1;
+}
+
+.con-list-desc {
+	lines: 1;
+}
+</style>

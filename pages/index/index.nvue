@@ -3,6 +3,28 @@
 	<div>
 		<list :show-scrollbar="false">
 			<cell>
+				<!-- 横向滚动顶部选项卡 -->
+				<div class="w-100" style="height: 75px;">
+					<scroller class="w-100 flex-row" style="height: 75px;" :show-scrollbar="false" scroll-direction="horizontal">
+						<div
+							v-for="(item, index) in tabBars"
+							:key="index"
+							@click="changeTab(index)"
+							class="a-center j-center"
+							style="height: 75px;width: 120px;"
+						>
+							<text
+								class="font-md text-muted"
+								style="height: 75px;line-height: 75px;border-bottom-width: 5px;border-style: solid;border-color: #FFFFFF;"
+								:style="{
+									color: tabIndex === index ? '#FD6801' : '#555',
+									'border-color': tabIndex === index ? '#FD6801' : '#FFFFFF'
+								}"
+							>{{ item.name }}</text>
+						</div>
+					</scroller>
+				</div>
+
 				<slider />
 				<!-- 轮播图 -->
 				<sum-slider :swipers="swipers" />
@@ -23,38 +45,10 @@
 
 				<!-- 公共列表组件 -->
 				<div class="row w-100">
-					<div class="col-6" style="padding-left: 2.5px;padding-right: 2.5px;">
-						<image src="../../static/images/list/5.jpg" style="width: 370px;height: 370px;"></image>
-						<text class="font-md text-dark px-2 py-1" style="lines: 1;">小米空调</text>
-						<text class="px-2 font text-muted" style="lines: 1;">1.5匹高频</text>
-
-						<div class="px-2 pt-1 row">
-							<price>3699</price>
-							<text class="line-h-through text-muted ml-1" style="align-self:flex-end;">￥7999</text>
-						</div>
-					</div>
-					
-					<div class="col-6" style="padding-left: 2.5px;padding-right: 2.5px;">
-						<image src="../../static/images/list/5.jpg" style="width: 370px;height: 370px;"></image>
-						<text class="font-md text-dark px-2 py-1" style="lines: 1;">小米空调</text>
-						<text class="px-2 font text-muted" style="lines: 1;">1.5匹高频</text>
-					
-						<div class="px-2 pt-1 row">
-							<price>3699</price>
-							<text class="line-h-through text-muted ml-1" style="align-self:flex-end;">￥7999</text>
-						</div>
-					</div>
-					
-					<div class="col-6" style="padding-left: 2.5px;padding-right: 2.5px;">
-						<image src="../../static/images/list/5.jpg" style="width: 370px;height: 370px;"></image>
-						<text class="font-md text-dark px-2 py-1" style="lines: 1;">小米空调</text>
-						<text class="px-2 font text-muted" style="lines: 1;">1.5匹高频</text>
-					
-						<div class="px-2 pt-1 row">
-							<price>3699</price>
-							<text class="line-h-through text-muted ml-1" style="align-self:flex-end;">￥7999</text>
-						</div>
-					</div>
+					<!-- <block v-for="(item,index) in list" :key="index">
+						
+					</block> -->
+					<div v-for="(item, index) in list" :key="index"><com-list :item="item" :index="index" /></div>
 				</div>
 			</cell>
 		</list>
@@ -67,7 +61,8 @@ import sumIndexNavs from '@/components/index/nvue/sum-index-navs.nvue';
 import divider from '@/components/common/divider.nvue';
 import sumThreeAdv from '@/components/index/nvue/sum-three-adv.nvue';
 import sumOneAdv from '@/components/index/nvue/sum-one-adv.nvue';
-import price from '@/components/common/price.nvue';
+import comList from '@/components/common/com-list.nvue';
+
 export default {
 	components: {
 		sumSlider,
@@ -75,11 +70,41 @@ export default {
 		divider,
 		sumThreeAdv,
 		sumOneAdv,
-		price
+		comList
 	},
 
 	data() {
 		return {
+			tabIndex: 0,
+
+			// 顶部选项卡数据
+			tabBars: [
+				{
+					name: '推荐'
+				},
+				{
+					name: '体育'
+				},
+				{
+					name: '热点'
+				},
+				{
+					name: '财经'
+				},
+				{
+					name: '娱乐'
+				},
+				{
+					name: '军事'
+				},
+				{
+					name: '历史'
+				},
+				{
+					name: '本地'
+				}
+			],
+
 			// 轮播图数据
 			swipers: [
 				{
@@ -148,12 +173,47 @@ export default {
 			oneAdv: {
 				src: '/static/images/index/banner/1.jpg',
 				title: '每日精选'
-			}
+			},
+
+			// 商品列表
+			list: [
+				{
+					cover: '/static/images/list/1.jpg',
+					title: '米家空调',
+					desc: '1.5匹频率',
+					oPrice: 2699,
+					pPrice: 1366
+				},
+				{
+					cover: '/static/images/list/1.jpg',
+					title: '米家空调',
+					desc: '1.5匹频率',
+					oPrice: 2699,
+					pPrice: 1366
+				},
+				{
+					cover: '/static/images/list/1.jpg',
+					title: '米家空调',
+					desc: '1.5匹频率',
+					oPrice: 2699,
+					pPrice: 1366
+				},
+				{
+					cover: '/static/images/list/1.jpg',
+					title: '米家空调',
+					desc: '1.5匹频率',
+					oPrice: 2699,
+					pPrice: 1366
+				}
+			]
 		};
 	},
 
-	onShow() {
-		console.log('点击了');
+	methods: {
+		// 选项卡事件
+		changeTab(index) {
+			this.tabIndex = index;
+		}
 	}
 };
 </script>
