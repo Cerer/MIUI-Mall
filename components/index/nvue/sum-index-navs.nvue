@@ -4,7 +4,7 @@
 		<div class="w-100 row px-2">
 			<div class="j-center a-center mt-3 index-navs mb-3" v-for="(item, index) in resData" :key="index">
 				<image class="index-navs-image" :src="item.src"></image>
-				<text class="font text-muted mt-1">{{ item.name }}</text>
+				<text class="font text-muted mt-1">{{ item.text }}</text>
 			</div>
 		</div>
 	</div>

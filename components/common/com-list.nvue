@@ -7,8 +7,8 @@
 			<text class="px-2 font text-muted con-list-desc">{{ item.desc }}</text>
 
 			<div class="px-2 pt-1 row a-end">
-				<price>{{ item.pPrice }}</price>
-				<text class="line-h-through text-muted ml-1">￥{{ item.oPrice }}</text>
+				<price>{{ item.pprice }}</price>
+				<text class="line-h-through text-muted ml-1">￥{{ item.oprice }}</text>
 			</div>
 		</div>
 	</div>

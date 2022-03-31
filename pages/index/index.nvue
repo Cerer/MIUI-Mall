@@ -1,61 +1,107 @@
 <template>
-	<!-- 有问题slider -->
 	<div>
-		<list :show-scrollbar="false">
-			<cell>
-				<!-- 横向滚动顶部选项卡 -->
-				<div class="w-100" style="height: 75px;">
-					<scroller class="w-100 flex-row" style="height: 75px;" :show-scrollbar="false" scroll-direction="horizontal">
-						<div
-							v-for="(item, index) in tabBars"
-							:key="index"
-							@click="changeTab(index)"
-							class="a-center j-center"
-							style="height: 75px;width: 120px;"
-						>
-							<text
-								class="font-md text-muted"
-								style="height: 75px;line-height: 75px;border-bottom-width: 5px;border-style: solid;border-color: #FFFFFF;"
-								:style="{
-									color: tabIndex === index ? '#FD6801' : '#555',
-									'border-color': tabIndex === index ? '#FD6801' : '#FFFFFF'
-								}"
-							>{{ item.name }}</text>
-						</div>
-					</scroller>
-				</div>
+		<!-- 横向滚动顶部选项卡 -->
+		<sum-tabbar :tabBars="tabBars" :tabIndex="tabIndex" @tabChange="tabChange" />
 
-				<slider />
-				<!-- 轮播图 -->
-				<sum-slider :swipers="swipers" />
+		<!-- 横向滚动列表 -->
+		<slider class="flex-1" :index="tabIndex" :infinite="false" @change="sliderChange">
+			<list :show-scrollbar="false" v-for="(list, listIndex) in newsitems" :key="listIndex">
+				<!-- 下拉刷新 -->
+				<refresh
+					class="w-100 flex-row j-center a-center"
+					style="height: 80px;"
+					@refresh="refresh"
+					@pullingdown="pullingdown"
+					:display="list.refreshShow"
+				>
+					<text class="font-md text-muted">{{ list.refreshText }}</text>
+				</refresh>
 
-				<!-- 图标分类组件 -->
-				<sum-index-navs :resData="indexNavs" />
+				<template v-if="list.data.length > 0 && list.firstLoad === 'after'">
+					<!-- 首页模板 -->
+					<template v-if="tabBars[listIndex].template === 'index'">
+						<cell v-for="(listItem, itemIndex) in list.data" :key="itemIndex">
+							<!-- 轮播图 -->
+							<sum-slider class="w-100" v-if="listItem.type === 'swiper'" :swipers="listItem.data" />
 
-				<!-- 封装全局分割线组件 -->
-				<divider />
+							<template v-if="listItem.type === 'indexnavs'">
+								<!-- 图标分类组件 -->
+								<sum-index-navs :resData="listItem.data" />
 
-				<!-- 三位广告图 -->
-				<sum-three-adv :resDate="threeAdv" />
+								<!-- 封装全局分割线组件 -->
+								<divider />
+							</template>
 
-				<divider />
+							<template v-if="listItem.type === 'threeAdv'">
+								<!-- 三位广告图 -->
+								<sum-three-adv :resDate="listItem.data" />
 
-				<!-- 大图广告 -->
-				<sum-one-adv :resDate="oneAdv" />
+								<divider />
+							</template>
 
-				<!-- 公共列表组件 -->
-				<div class="row w-100">
-					<!-- <block v-for="(item,index) in list" :key="index">
-						
-					</block> -->
-					<div v-for="(item, index) in list" :key="index"><com-list :item="item" :index="index" /></div>
-				</div>
-			</cell>
-		</list>
+							<!-- 大图广告 -->
+							<sum-one-adv v-if="listItem.type === 'oneAdv'" :resDate="listItem.data" />
+
+							<!-- 公共列表组件 -->
+							<div class="row w-100" v-if="listItem.type === 'list'">
+								<block v-for="(item, index) in listItem.data" :key="index">
+									<com-list :item="item" :index="index" />
+								</block>
+							</div>
+						</cell>
+					</template>
+
+					<!-- 专题页 -->
+					<template v-else-if="tabBars[listIndex].template === 'special'">
+						<cell v-for="(listItem, itemIndex) in list.data" :key="itemIndex">
+							<!-- 轮播图 -->
+							<sum-slider class="w-100" v-if="listItem.type === 'swiper'" :swipers="listItem.data" />
+
+							<!-- 图标分类组件 -->
+							<sum-index-navs v-if="listItem.type === 'indexnavs'" :resData="listItem.data" />
+
+							<!-- 公共列表组件 -->
+							<div class="w-100" v-if="listItem.type === 'list'">
+								<div class="p-2 border-bottom"><text class="text-dark font-md font-weight">热卖爆品</text></div>
+								<div>
+									<div class="row w-100">
+										<block v-for="(item, index) in listItem.data" :key="index">
+											<com-list :item="item" :index="index" />
+										</block>
+									</div>
+								</div>
+							</div>
+						</cell>
+					</template>
+				</template>
+
+				<!-- 加载中 -->
+				<template v-else-if="list.firstLoad === 'ing'">
+					<cell class="w-100 j-center a-center pt-5"><text class="font-md text-muted">加载中...</text></cell>
+				</template>
+
+				<!-- 空数据 -->
+				<template v-else>
+					<cell class="w-100 j-center a-center pt-5"><text class="font-md text-muted">暂无数据</text></cell>
+				</template>
+
+				<!-- 上拉加载 -->
+				<loading
+					class="w-100 flex-row j-center a-center"
+					style="height: 70px;"
+					@loading="onLoading"
+					:display="list.loadingShow"
+				>
+					<text class="font-md text-muted">Loading...</text>
+				</loading>
+			</list>
+		</slider>
 	</div>
 </template>
 
 <script>
+import api from '@/common/lib/request.js';
+import sumTabbar from '@/components/index/nvue/sum-tabbar.nvue';
 import sumSlider from '@/components/index/nvue/sum-slider.nvue';
 import sumIndexNavs from '@/components/index/nvue/sum-index-navs.nvue';
 import divider from '@/components/common/divider.nvue';
@@ -65,6 +111,7 @@ import comList from '@/components/common/com-list.nvue';
 
 export default {
 	components: {
+		sumTabbar,
 		sumSlider,
 		sumIndexNavs,
 		divider,
@@ -78,141 +125,154 @@ export default {
 			tabIndex: 0,
 
 			// 顶部选项卡数据
-			tabBars: [
-				{
-					name: '推荐'
-				},
-				{
-					name: '体育'
-				},
-				{
-					name: '热点'
-				},
-				{
-					name: '财经'
-				},
-				{
-					name: '娱乐'
-				},
-				{
-					name: '军事'
-				},
-				{
-					name: '历史'
-				},
-				{
-					name: '本地'
-				}
-			],
+			tabBars: [],
 
-			// 轮播图数据
-			swipers: [
-				{
-					src: '/static/images/index/banner/1.jpg'
-				},
-				{
-					src: '/static/images/index/banner/1.jpg'
-				},
-				{
-					src: '/static/images/index/banner/1.jpg'
-				}
-			],
-
-			// 图标分类数据
-			indexNavs: [
-				{
-					src: '/static/images/index/nav/1.png',
-					name: '新品分类'
-				},
-				{
-					src: '/static/images/index/nav/2.gif',
-					name: '小米众筹'
-				},
-				{
-					src: '/static/images/index/nav/3.gif',
-					name: '以旧换新'
-				},
-				{
-					src: '/static/images/index/nav/4.gif',
-					name: '1分拼团'
-				},
-				{
-					src: '/static/images/index/nav/5.gif',
-					name: '超值特卖'
-				},
-				{
-					src: '/static/images/index/nav/6.gif',
-					name: '小米秒杀'
-				},
-				{
-					src: '/static/images/index/nav/7.gif',
-					name: '真心想要'
-				},
-				{
-					src: '/static/images/index/nav/8.gif',
-					name: '电视热卖'
-				},
-				{
-					src: '/static/images/index/nav/9.gif',
-					name: '家电热卖'
-				},
-				{
-					src: '/static/images/index/nav/10.gif',
-					name: '米粉卡'
-				}
-			],
-
-			// 三位广告图数据
-			threeAdv: [
-				{ src: '/static/images/index/contentImag/1.jpg' },
-				{ src: '/static/images/index/contentImag/2.jpg' },
-				{ src: '/static/images/index/contentImag/demo3.jpg' }
-			],
-
-			// 大图广告数据
-			oneAdv: {
-				src: '/static/images/index/banner/1.jpg',
-				title: '每日精选'
-			},
-
-			// 商品列表
-			list: [
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				}
-			]
+			newsitems: []
 		};
 	},
 
+	created() {
+		// 初始化数据
+		this._init();
+	},
+
 	methods: {
-		// 选项卡事件
-		changeTab(index) {
+		// 初始化数据
+		async _init() {
+			// 第一种
+			// let data = await api.get('/index_category/data');
+			// if (data) {
+			// 	this.tabBars = data.category;
+			// 	this.newsitems = this.getData(data);
+			// }
+
+			// 第二种
+			api.get('/index_category/data').then(data => {
+				this.tabBars = data.category;
+				this.newsitems = this.getData(data);
+			});
+		},
+
+		// 获取首屏数据
+		getData(e) {
+			let arr = [];
+
+			// 拿到tabBars的长度,根据长度生成页面
+			let tabLength = this.tabBars.length;
+
+			for (let i = 0; i < tabLength; i++) {
+				// 防止重复加载数据，做标识,加载过一次后不重复调用
+				let firstLoad = i === 0 ? 'after' : 'before';
+				let aryItem = {
+					loadingShow: 'hide',
+					refreshShow: 'hide',
+					refreshText: '下拉可以刷新',
+					data: [],
+					firstLoad: firstLoad
+				};
+
+				// 给页面添加数据
+				if (this.tabBars[i].template === 'index') {
+					aryItem.data = e.data;
+				}
+
+				arr.push(aryItem);
+			}
+			return arr;
+		},
+
+		// 获取切换tanbs数据
+		async addData(callback = false, refresh = false) {
+			let e = this.tabIndex;
+
+			// 拿到当前分类id
+			let id = this.tabBars[e].id;
+
+			// 拿到当前分类的分页数
+			let page = !refresh ? Math.ceil(this.newsitems[e].data.length / 5) + 1 : 1;
+
+			// 修改请求状态，首次加载中...
+			if (page === 1 && this.newsitems[e].refreshShow === 'hide') {
+				this.newsitems[e].firstLoad = 'ing';
+			}
+			
+			// 修改请求状态，首次加载完成
+			if (page === 1 && this.newsitems[e].refreshShow === 'hide') {
+				this.newsitems[e].firstLoad = 'after';
+			}
+
+			api.get(`/index_category/${id}/data/${page}`).then(data => {
+				this.newsitems[e].data = !refresh ? [...this.newsitems[e].data, ...data] : [...data];
+
+				if (typeof callback === 'function') {
+					callback();
+				}
+
+				// 没有更多数据
+				if (data.length < 5) {
+					this.newsitems[e].loadingText = '没有更多了';
+					return;
+				}
+			});
+		},
+
+		// 切换横向滚动条事件
+		tabChange(index) {
 			this.tabIndex = index;
+		},
+
+		// 监听横向滚动列表事件
+		sliderChange(e) {
+			this.tabIndex = e.index;
+			// 防止重复调用接口数据
+			if (this.newsitems[this.tabIndex].firstLoad === 'before') {
+				this.addData();
+			}
+		},
+
+		// 上拉加载事件
+		onLoading() {
+			// 存储当前索引
+			let index = this.tabIndex;
+			this.newsitems[index].loadingShow = 'show';
+
+			if (this.newsitems[index].loadingText === '没有更多了') {
+				uni.showToast({
+					title: '没有更多了',
+					icon: 'none'
+				});
+				return (this.newsitems[index].loadingShow = 'hide');
+			}
+
+			this.addData(() => {
+				uni.showToast({
+					title: '加载成功',
+					icon: 'none'
+				});
+				this.newsitems[index].loadingShow = 'hide';
+			});
+		},
+
+		// 执行刷新
+		refresh(e) {
+			// 存储当前索引
+			let index = this.tabIndex;
+			this.newsitems[index].refreshShow = 'show';
+			this.newsitems[index].refreshText = '正在刷新...';
+
+			this.addData(() => {
+				uni.showToast({
+					title: '下拉刷新成功',
+					icon: 'none'
+				});
+				this.newsitems[index].refreshShow = 'hide';
+				this.newsitems[index].refreshText = '下拉可以刷新';
+			}, true);
+		},
+
+		// 判断下拉刷新状态
+		pullingdown(e) {
+			this.refreshText = e.pullingDistance > e.viewHeight ? '释放就能刷新咯' : '下拉可以刷新';
 		}
 	}
 };

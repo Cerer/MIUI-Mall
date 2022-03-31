@@ -14,7 +14,7 @@
 <script>
 export default {
 	props: {
-		resdata: Array,
+		resdata: [Array, Object],
 		height: {
 			type: String,
 			default: '350rpx'

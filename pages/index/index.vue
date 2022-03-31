@@ -1,6 +1,23 @@
 <template>
 	<!-- 首页 -->
 	<view class="content">
+		<!-- #ifdef MP -->
+		<!-- 自定义导航栏 -->
+		<view class="d-flex a-center" style="height: 90rpx;">
+			<!-- 左边 -->
+			<view class="d-flex j-center a-center" style="width: 85rpx;"><text class="iconfont icon-xiaoxi1"></text></view>
+
+			<!-- 中间 -->
+			<view class="flex-1 bg-linght-muted rounded d-flex a-center text-linght-muted" style="height: 65rpx;">
+				<text class="iconfont icon-sousuo mx-2"></text>
+				智能积木
+			</view>
+
+			<!-- 右边 -->
+			<view class="d-flex j-center a-center" style="width: 85rpx;"><text class="iconfont icon-richscan_icon"></text></view>
+		</view>
+		<!-- #endif -->
+
 		<!-- 顶部选项卡 -->
 		<scroll-view
 			scroll-x
@@ -25,41 +42,53 @@
 		<swiper :duration="150" :style="'height:' + scrollH + 'px;'" @change="onChangeTab">
 			<swiper-item v-for="(item, index) of newsList" :key="index">
 				<scroll-view scroll-y="true" :style="'height:' + scrollH + 'px;'" @scrolltolower="loadMore(index)">
-					<block v-for="(list, listIndex) in item.list" :key="listIndex">
-						<!-- 轮播图组件 -->
-						<com-swipers v-if="list.type === 'swipers'" :resdata="list.data"></com-swipers>
+					<template v-if="item.list.length > 0">
+						<block v-for="(list, listIndex) in item.list" :key="listIndex">
+							<!-- 轮播图组件 -->
+							<com-swipers v-if="list.type === 'swiper'" :resdata="list.data"></com-swipers>
 
-						<template v-else-if="list.type === 'indexNavs'">
-							<!-- 首页分类 -->
-							<com-nav :resdata="list.data"></com-nav>
+							<template v-else-if="list.type === 'indexnavs'">
+								<!-- 首页分类 -->
+								<com-nav :resdata="list.data"></com-nav>
 
-							<!-- 分割线 -->
-							<view class="cutLine"></view>
-						</template>
+								<!-- 分割线 -->
+								<view class="cutLine"></view>
+							</template>
 
-						<template v-else-if="list.type === 'threeAdv'">
-							<!-- 三图广告 -->
-							<three-adv :resdata="list.data"></three-adv>
+							<template v-else-if="list.type === 'threeAdv'">
+								<!-- 三图广告 -->
+								<three-adv :resdata="list.data"></three-adv>
 
-							<!-- 分割线 -->
-							<view class="cutLine"></view>
-						</template>
+								<!-- 分割线 -->
+								<view class="cutLine"></view>
+							</template>
 
-						<!-- 大图广告位 -->
-						<!-- <card headTitle="每日精选" bodyCover="/static/images/index/banner/1.jpg" /> -->
+							<!-- 大图广告位 -->
+							<!-- <card headTitle="每日精选" bodyCover="/static/images/index/banner/1.jpg" /> -->
 
-						<view v-if="list.type === 'commonList'" class="row j-sb">
-							<block v-for="(keyItem, keyIndex) in list.data" :key="keyIndex">
-								<com-list :item="keyItem" :index="keyIndex"></com-list>
-							</block>
-						</view>
-					</block>
+							<view v-if="list.type === 'list'" class="row j-sb">
+								<block v-for="(keyItem, keyIndex) in list.data" :key="keyIndex">
+									<com-list :item="keyItem" :index="keyIndex"></com-list>
+								</block>
+							</view>
+						</block>
 
-					<!-- 分割线 -->
-					<view class="cutLine"></view>
+						<!-- 分割线 -->
+						<view class="cutLine"></view>
 
-					<!-- 加载更多 -->
-					<view class="all-flex-row text-linght-muted font-md py-3">{{ item.loadText }}</view>
+						<!-- 加载更多 -->
+						<view class="all-flex-row text-linght-muted font-md py-3">{{ item.loadText }}</view>
+					</template>
+
+					<!-- 加载中 -->
+					<template v-else-if="item.firstLoad === 'before' || item.firstLoad === 'ing'">
+						<view class="d-flex j-center a-center pt-5"><text class="font-md text-muted">加载中...</text></view>
+					</template>
+
+					<!-- 空数据 -->
+					<template v-else>
+						<view class="d-flex j-center a-center pt-5"><text class="font-md text-muted">暂无数据</text></view>
+					</template>
 				</scroll-view>
 			</swiper-item>
 		</swiper>
@@ -67,34 +96,7 @@
 </template>
 
 <script>
-// 模拟后端数据
-let demoTabs = [
-	{
-		name: '推荐'
-	},
-	{
-		name: '体育'
-	},
-	{
-		name: '热点'
-	},
-	{
-		name: '财经'
-	},
-	{
-		name: '娱乐'
-	},
-	{
-		name: '军事'
-	},
-	{
-		name: '历史'
-	},
-	{
-		name: '本地'
-	}
-];
-
+import api from '@/common/lib/request.js';
 let demo1 = [
 	{
 		type: 'swipers',
@@ -344,7 +346,16 @@ export default {
 		// 获取可视区域高度
 		uni.getSystemInfo({
 			success: res => {
-				this.scrollH = res.windowHeight - uni.upx2px(82);
+				let nabH = 0;
+				// #ifdef MP
+				nabH = 0;
+				// #endif
+
+				// #ifndef MP
+				nabH = uni.upx2px(90);
+				// #endif
+
+				this.scrollH = res.windowHeight - uni.upx2px(82) - nabH;
 			}
 		});
 		this.__init();
@@ -352,26 +363,66 @@ export default {
 	methods: {
 		// 初始化数据
 		__init() {
-			// 获取顶部选项卡
-			this.tabBars = demoTabs;
+			api.get('/index_category/data').then(res => {
+				// 获取顶部选项卡
+				this.tabBars = res.category;
 
-			//根据顶部选项卡生成页面
-			let arr = [];
-			for (let i = 0; i < this.tabBars.length; i++) {
-				let obj = {
-					list: [],
+				//根据顶部选项卡生成页面
+				let arr = [];
+				for (let i = 0; i < this.tabBars.length; i++) {
+					let obj = {
+						list: [],
 
-					// 1.上拉加载更多 2.加载中... 3.没有更多了
-					loadText: '上拉加载更多'
-				};
+						// 1.上拉加载更多 2.加载中... 3.没有更多了
+						loadText: '上拉加载更多',
+						firstLoad: 'before'
+					};
 
-				// 获取首屏数据
-				if (i === 0) {
-					obj.list = demo1;
+					// 获取首屏数据
+					if (i === 0) {
+						obj.list = res.data;
+						obj.firstLoad = 'after';
+					}
+					arr.push(obj);
 				}
-				arr.push(obj);
+				this.newsList = arr;
+			});
+		},
+
+		// 加载数据
+		async addData(callback = false) {
+			let index = this.tabIndex;
+
+			let obj = this.newsList[index];
+
+			// 拿到当前分类id
+			let id = this.tabBars[index].id;
+
+			// 拿到当前分类的分页数
+			let page = Math.ceil(obj.list.length / 5) + 1;
+
+			// 请求加载中
+			if (page === 1) {
+				obj.firstLoad = 'ing';
 			}
-			this.newsList = arr;
+
+			let data = await api.get('/index_category/' + id + '/data/' + page);
+
+			// 请求完成
+			if (page === 1) {
+				obj.firstLoad = 'after';
+			}
+
+			if (data) {
+				// 赋值
+				obj.list = [...obj.list, ...data];
+				obj.loadText = data.length < 5 ? '没有更多了' : '上拉加载更多';
+			}
+
+			// 执行回调函数
+			if (typeof callback === 'function') {
+				callback();
+			}
 		},
 
 		// 切换选项卡
@@ -381,7 +432,11 @@ export default {
 			}
 			this.tabIndex = index;
 			this.scrollinto = 'tab' + index;
-			this.addData(this.tabIndex);
+
+			if (this.newsList[index].firstLoad === 'after') {
+				return;
+			}
+			this.addData();
 		},
 
 		// 监听滑动
@@ -389,33 +444,23 @@ export default {
 			this.changeTab(e.detail.current);
 		},
 
-		// 加载数据
-		addData(index) {
-			if (index === 0) {
-				this.newsList[index].list = demo1;
-			} else {
-				this.newsList[index].list = demo2;
-			}
-		},
-
 		// 上拉加载
 		loadMore(index) {
 			let item = this.newsList[index];
 
 			// 是否处于可加载状态
-			if (item.loadText !== '上拉加载更多') {
-				return;
-			}
+			if (item.loadText !== '上拉加载更多') return;
 
-			// 模拟数据
+			// 模拟加载
 			item.loadText = '加载中...';
-			setTimeout(() => {
-				// 加载数据
-				item.list = [...item.list, ...demo2];
 
+			this.addData(() => {
 				// 恢复状态
-				item.loadText = '上拉加载更多';
-			}, 2000);
+				uni.showToast({
+					title: '加载成功',
+					icon: 'none'
+				});
+			});
 		}
 	}
 };

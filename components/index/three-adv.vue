@@ -6,16 +6,16 @@
 		<view class="d-flex flex-column">
 			<image
 				class="right-image"
-				:src="resdata.smallTop.src"
+				:src="resdata.smalltop.src"
 				lazy-load
 				style="border-bottom: 2upx solid #F5F5F5;"
-				@tap="enevt(resdata.smallTop)"
+				@tap="enevt(resdata.smalltop)"
 			></image>
 			<image
 				class="right-image"
-				:src="resdata.smallBottom.src"
+				:src="resdata.smallbottom.src"
 				lazy-load
-				@tap="enevt(resdata.smallBottom)"
+				@tap="enevt(resdata.smallbottom)"
 			></image>
 		</view>
 	</view>
