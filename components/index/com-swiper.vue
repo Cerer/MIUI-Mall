@@ -1,7 +1,7 @@
 <template>
 	<!-- 轮播组件 -->
 	<view>
-		<swiper :style="getStyle" indicator-dots autoplay :interval="3000" :duration="1000" circular>
+		<swiper :style="getStyle" indicator-dots autoplay :interval="3000" :duration="200" circular>
 			<swiper-item v-for="(item, index) of resdata" :key="index">
 				<view class="swiper-item">
 					<image class="w-100" :src="item.src" @tap="event(item, index)" :style="getStyle"></image>

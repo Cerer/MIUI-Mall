@@ -1,7 +1,7 @@
 <!-- 商品列表 -->
 <template>
 	<div>
-		<div class="col-6 com-list mb-1">
+		<div class="col-6 com-list mb-1" @click="openDetail">
 			<image class="con-list-image" :src="item.cover"></image>
 			<text class="font-md text-dark px-2 py-1 con-list-title">{{ item.title }}</text>
 			<text class="px-2 font text-muted con-list-desc">{{ item.desc }}</text>
@@ -24,6 +24,15 @@ export default {
 	props: {
 		item: Object,
 		index: Number
+	},
+
+	methods: {
+		// 打开详情页
+		openDetail() {
+			uni.navigateTo({
+				url: '/pages/detail/detail?detail=' + JSON.stringify(this.item)
+			});
+		}
 	}
 };
 </script>

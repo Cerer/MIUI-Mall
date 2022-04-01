@@ -26,12 +26,11 @@ export default {
 	methods: {
 		openDetail() {
 			uni.navigateTo({
-				url: '/pages/detail/detail'
+				url: '/pages/detail/detail?detail=' + JSON.stringify(this.item)
 			});
 		}
 	}
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

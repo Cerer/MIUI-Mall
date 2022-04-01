@@ -215,6 +215,7 @@
 			"path": "pages/detail-comment/detail-comment",
 			"style": {
 				"navigationBarTitleText": "商品评价",
+				"enablePullDownRefresh": true,
 				"app-plus": {
 					"scrollIndicator": "none",
 					"bounce": "none"
@@ -332,7 +333,7 @@
 				}
 			}
 		},
-		
+
 		// 查看物流
 		{
 			"path": "pages/logistics-detail/logistics-detail",
@@ -340,7 +341,7 @@
 				"navigationBarTitleText": "物流信息"
 			}
 		},
-		
+
 		// 申请售后
 		{
 			"path": "pages/after-sale/after-sale",
@@ -348,7 +349,7 @@
 				"navigationBarTitleText": "申请售后"
 			}
 		},
-		
+
 		// 关于商城
 		{
 			"path": "pages/about/about",

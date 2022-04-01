@@ -1,3 +1,4 @@
+<!-- 横向滚动评论 -->
 <template>
 	<view class="p-2">
 		<scroll-view scroll-x class="scroll-row">
@@ -8,12 +9,7 @@
 				:key="index"
 			>
 				<view class="d-flex a-center mb-1">
-					<image
-						:src="item.userPic"
-						mode="widthFix"
-						style="width: 70rpx;height: 70rpx;"
-						class="rounded-circle"
-					></image>
+					<image :src="item.userPic" mode="widthFix" style="width: 70rpx;height: 70rpx;" class="rounded-circle"></image>
 
 					<view class="ml-2">
 						<text class="font-md line-h">{{ item.userName }}</text>
@@ -33,18 +29,25 @@
 			</view>
 		</scroll-view>
 
-		<navigator url="/pages/detail-comment/detail-comment">
-			<view class="all-flex-row py-2 mt-2 text-primary" hover-class="bg-linght-muted">
-				更多评论
-				<view class="iconfont icon-you"></view>
-			</view>
-		</navigator>
+		<view class="all-flex-row py-2 mt-2 text-primary" hover-class="bg-linght-muted" @click="open">
+			更多评论
+			<view class="iconfont icon-you"></view>
+		</view>
 	</view>
 </template>
 
 <script>
 export default {
-	props: ['comments']
+	props: ['comments', 'goods_id'],
+
+	methods: {
+		// 打开评论列表
+		open() {
+			uni.navigateTo({
+				url: '/pages/detail-comment/detail-comment?goods_id=' + this.goods_id
+			});
+		}
+	}
 };
 </script>
 

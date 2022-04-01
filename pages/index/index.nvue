@@ -138,9 +138,9 @@ export default {
 
 	methods: {
 		// 初始化数据
-		async _init() {
+		_init() {
 			// 第一种
-			// let data = await api.get('/index_category/data');
+			// let data = await this.api.get('/index_category/data');
 			// if (data) {
 			// 	this.tabBars = data.category;
 			// 	this.newsitems = this.getData(data);
@@ -195,7 +195,7 @@ export default {
 			if (page === 1 && this.newsitems[e].refreshShow === 'hide') {
 				this.newsitems[e].firstLoad = 'ing';
 			}
-			
+
 			// 修改请求状态，首次加载完成
 			if (page === 1 && this.newsitems[e].refreshShow === 'hide') {
 				this.newsitems[e].firstLoad = 'after';

@@ -5,7 +5,7 @@
 		<com-swiper :resdata="banners" height="750" :preview="true"></com-swiper>
 
 		<!-- 基础详情 -->
-		<detail-info :detail="detail"></detail-info>
+		<detail-info :detail="detail" :show-price="showPrice"></detail-info>
 
 		<!-- 滚动商品特性 -->
 		<scroll-attrs :baseAttrs="baseAttrs"></scroll-attrs>
@@ -17,7 +17,7 @@
 					<view slot="body">
 						<view class="d-flex font">
 							<text class="mr-2 text-muted">已选</text>
-							<text>火焰红 64G 标配</text>
+							<text>{{ checkedSkus }}</text>
 						</view>
 					</view>
 				</uni-list-item>
@@ -52,7 +52,7 @@
 		</view>
 
 		<!-- 横向滚动评论 -->
-		<scroll-comments :comments="comments"></scroll-comments>
+		<scroll-comments :goods_id="detail.id" :comments="comments"></scroll-comments>
 
 		<!-- 商品详情 -->
 		<view class="py-4">
@@ -80,8 +80,8 @@
 					class="border rounded"
 				></image>
 				<view class="pl-2">
-					<price priceSize="font-lg" unitSize="font">3369</price>
-					<text class="d-block">火焰红 64G 标配</text>
+					<price priceSize="font-lg" unitSize="font">{{ showPrice }}</price>
+					<text class="d-block">{{ checkedSkus }}</text>
 				</view>
 			</view>
 
@@ -99,12 +99,7 @@
 
 				<view class="d-flex j-sb a-center p-2 border-top border-light-secondary">
 					<text>购买数量</text>
-					<uni-number-box
-						:min="detail.minNum"
-						:max="detail.maxNum"
-						:value="detail.num"
-						@change="detail.num = $event"
-					></uni-number-box>
+					<uni-number-box :min="1" :max="maxStock" :value="detail.num" @change="detail.num = $event"></uni-number-box>
 				</view>
 			</scroll-view>
 
@@ -192,18 +187,6 @@ import price from '@/components/common/price.vue';
 import radioGroups from '@/components/common/radio-group.vue';
 import uniNumberBox from '@/components/uni-ui/uni-number-box/uni-number-box.vue';
 
-var htmlString = `
-<p>
-<img src="../../static/images/detail/3.webp">
-<img src="../../static/images/detail/4.webp">
-<img src="../../static/images/detail/5.webp">
-<img src="../../static/images/detail/6.webp">
-<img src="../../static/images/detail/7.webp">
-<img src="../../static/images/detail/8.webp">
-<img src="../../static/images/detail/9.webp">
-</p>
-`;
-
 export default {
 	components: {
 		comSwiper,
@@ -224,7 +207,45 @@ export default {
 	computed: {
 		...mapState({
 			pathList: state => state.path.list
-		})
+		}),
+
+		//拿到选中skus组成字符串
+		checkedSkus() {
+			let checkedSkus = this.selects.map(v => {
+				return v.list[v.selectIndex].name;
+			});
+			return checkedSkus.join(',');
+		},
+
+		// 拿到选中skus索引
+		checkedSkusIndex() {
+			let goodsSkus = this.detail.goodsSkus;
+			if (goodsSkus) {
+				let index = goodsSkus.findIndex(item => {
+					return item.skusText === this.checkedSkus;
+				});
+				return index;
+			} else {
+				return -1;
+			}
+		},
+
+		// 当前选中显示价格
+		showPrice() {
+			if (this.checkedSkusIndex < 0) {
+				return this.detail.min_price || 0.0;
+			}
+			return this.detail.goodsSkus[this.checkedSkusIndex].pprice;
+		},
+
+		// 最大库存
+		maxStock() {
+			if (this.detail.goodsSkus) {
+				return this.detail.goodsSkus[this.checkedSkusIndex].stock;
+			} else {
+				return 100;
+			}
+		}
 	},
 
 	data() {
@@ -235,147 +256,26 @@ export default {
 				service: 'none'
 			},
 
-			banners: [
-				{
-					src: '/static/images/detail/1.webp'
-				},
-				{
-					src: '/static/images/detail/2.webp'
-				}
-			],
+			// 轮播图数据
+			banners: [],
 
-			detail: {
-				id: '10',
-				title: '小米MIX3 6GB+128GB',
-				desc: '磁动力滑盖全面屏 / 前后旗舰AI双摄 / 四曲面彩色陶瓷机身 / 高效10W无线充电',
-				pPrice: 3299,
-				num: 1,
-				minNum: 1,
-				maxNum: 100,
-				cover: '/static/images/list/1.jpg'
-			},
+			// 商品基本信息数据
+			detail: {},
 
-			baseAttrs: [
-				{
-					icon: 'icon-cpu',
-					title: 'CPU',
-					desc: '绞龙845八核'
-				},
-				{
-					icon: 'icon-cpu',
-					title: 'CPU',
-					desc: '绞龙845八核'
-				},
-				{
-					icon: 'icon-cpu',
-					title: 'CPU',
-					desc: '绞龙845八核'
-				},
-				{
-					icon: 'icon-cpu',
-					title: 'CPU',
-					desc: '绞龙845八核'
-				},
-				{
-					icon: 'icon-cpu',
-					title: 'CPU',
-					desc: '绞龙845八核'
-				},
-				{
-					icon: 'icon-cpu',
-					title: 'CPU',
-					desc: '绞龙845八核'
-				},
-				{
-					icon: 'icon-cpu',
-					title: 'CPU',
-					desc: '绞龙845八核'
-				},
-				{
-					icon: 'icon-cpu',
-					title: 'CPU',
-					desc: '绞龙845八核'
-				}
-			],
+			// 滚动属性数据
+			baseAttrs: [],
 
-			comments: [
-				{
-					userPic: '/static/images/index/contentImag/demo6.jpg',
-					userName: '关关雎鸠',
-					create_time: '2021-7-14',
-					goods_num: '123',
-					content: '评论内容评论内容评论内容评论内容评论内容评论内容评论内容评论内容',
-					imgList: ['/static/images/list/2.jpg', '/static/images/list/3.jpg', '/static/images/list/4.jpg']
-				},
-				{
-					userPic: '/static/images/index/contentImag/demo6.jpg',
-					userName: '关关雎鸠',
-					create_time: '2021-7-14',
-					goods_num: '123',
-					content: '评论内容评论内容评论内容评论内容评论内容评论内容评论内容评论内容',
-					imgList: ['/static/images/list/2.jpg', '/static/images/list/3.jpg', '/static/images/list/4.jpg']
-				},
-				{
-					userPic: '/static/images/index/contentImag/demo6.jpg',
-					userName: '关关雎鸠',
-					create_time: '2021-7-14',
-					goods_num: '123',
-					content: '评论内容评论内容评论内容评论内容评论内容评论内容评论内容评论内容',
-					imgList: ['/static/images/list/2.jpg', '/static/images/list/3.jpg', '/static/images/list/4.jpg']
-				}
-			],
+			// 热门评论数据
+			comments: [],
 
-			detailData: htmlString,
+			// 商品详情数据
+			detailData: '',
 
-			hotList: [
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				}
-			],
+			// 热门商品数据
+			hotList: [],
 
-			// 选项卡单选按钮数据
-			selects: [
-				{
-					title: '颜色',
-					selectIndex: 0,
-					list: [{ name: '黄色' }, { name: '黑色' }, { name: '红色' }]
-				},
-				{
-					title: '容量',
-					selectIndex: 0,
-					list: [{ name: '64GB' }, { name: '128GB' }]
-				},
-				{
-					title: '套餐',
-					selectIndex: 0,
-					list: [{ name: '标配' }, { name: '套餐一' }, { name: '套餐二' }]
-				}
-			],
+			// 商品规格数据
+			selects: [],
 
 			serviceList: [
 				{
@@ -398,6 +298,14 @@ export default {
 		};
 	},
 
+	onLoad(e) {
+		if (e.detail) {
+			this.$nextTick(function() {
+				this.__init(JSON.parse(e.detail));
+			});
+		}
+	},
+
 	// 监听页面返回事件
 	onBackPress() {
 		// 关闭模态框
@@ -412,6 +320,90 @@ export default {
 	methods: {
 		...mapMutations(['addGoodsToCart']),
 
+		// 初始化页面
+		__init(data) {
+			this.api.get('/goods/' + data.id).then(res => {
+				// 轮播图
+				this.banners = res.goodsBanner.map(v => {
+					return {
+						src: v.url
+					};
+				});
+
+				// 基本信息
+				this.detail = res;
+
+				//修改页面标题
+				uni.setNavigationBarTitle({
+					title: res.title
+				});
+
+				// 滚动商品属性数据
+				this.baseAttrs = res.goodsAttrs.map(v => {
+					return {
+						icon: 'icon-cpu',
+						title: v.name,
+						desc: v.value
+					};
+				});
+
+				// 热门评论
+				this.comments = res.hotComments.map(v => {
+					return {
+						id: v.id,
+						user_id: v.user_id,
+						userPic: v.user.avatar,
+						userName: v.user.nickname,
+						create_time: v.review_time,
+						goods_num: v.goods_num,
+						content: v.review.data,
+						imgList: v.review.image
+					};
+				});
+
+				// 商品详情(这块有点问题，先调了组件，数据为空，界面会显示数据不能为空，后才有数据，赋值图片成功)
+				this.detailData = res.content;
+
+				// 热门商品
+				this.hotList = res.hotList.map(v => {
+					return {
+						id: v.id,
+						cover: v.cover,
+						title: v.title,
+						desc: v.desc,
+						oprice: v.min_oprice,
+						pprice: v.min_price
+					};
+				});
+
+				// 商品规格
+				this.selects = res.goodsSkusCard.map(v => {
+					let valueList = v.goodsSkusCardValue.map(i => {
+						return {
+							id: i.id,
+							name: i.value
+						};
+					});
+
+					return {
+						id: v.id,
+						title: v.name,
+						selectIndex: 0,
+						list: valueList
+					};
+				});
+
+				//商品规格（匹配价格）
+				this.detail.goodsSkus.forEach(i => {
+					let nameList = [];
+					for (let key in i.skus) {
+						nameList.push(i.skus[key].value);
+					}
+					i.skusText = nameList.join(',');
+				});
+			});
+		},
+
 		// 点击详情图预览
 		preview(src, e) {
 			// do something
@@ -421,7 +413,7 @@ export default {
 		navigate(href, e) {
 			// do something
 		},
-		
+
 		// 点击显示弹框
 		show(key) {
 			this.popup[key] = 'show';

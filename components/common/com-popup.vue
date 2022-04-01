@@ -12,6 +12,10 @@ export default {
 			type: String,
 			default: 'none'
 		}
+	},
+
+	methods: {
+		movehandle() {}
 	}
 };
 </script>

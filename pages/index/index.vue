@@ -96,211 +96,6 @@
 </template>
 
 <script>
-import api from '@/common/lib/request.js';
-let demo1 = [
-	{
-		type: 'swipers',
-		data: [
-			{
-				src: '../../static/images/index/banner/1.jpg'
-			},
-			{
-				src: '../../static/images/index/banner/1.jpg'
-			},
-			{
-				src: '../../static/images/index/banner/1.jpg'
-			}
-		]
-	},
-	{
-		type: 'indexNavs',
-		data: [
-			{
-				src: '../../static/images/index/nav/1.png',
-				text: '新品分类'
-			},
-			{
-				src: '../../static/images/index/nav/2.gif',
-				text: '小米众筹'
-			},
-			{
-				src: '../../static/images/index/nav/3.gif',
-				text: '以旧换新'
-			},
-			{
-				src: '../../static/images/index/nav/4.gif',
-				text: '1分拼团'
-			},
-			{
-				src: '../../static/images/index/nav/5.gif',
-				text: '超值特卖'
-			},
-			{
-				src: '../../static/images/index/nav/6.gif',
-				text: '小米秒杀'
-			},
-			{
-				src: '../../static/images/index/nav/7.gif',
-				text: '真心想要'
-			},
-			{
-				src: '../../static/images/index/nav/8.gif',
-				text: '电视热卖'
-			},
-			{
-				src: '../../static/images/index/nav/9.gif',
-				text: '家电热卖'
-			},
-			{
-				src: '../../static/images/index/nav/10.gif',
-				text: '米粉卡'
-			}
-		]
-	},
-	{
-		type: 'threeAdv',
-		data: {
-			big: {
-				src: '/static/images/index/contentImag/1.jpg'
-			},
-			smallTop: {
-				src: '/static/images/index/contentImag/2.jpg'
-			},
-			smallBottom: {
-				src: '/static/images/index/contentImag/2.jpg'
-			}
-		}
-	},
-
-	{
-		type: 'commonList',
-		data: [
-			{
-				cover: '/static/images/list/1.jpg',
-				title: '米家空调',
-				desc: '1.5匹频率',
-				oPrice: 2699,
-				pPrice: 1366
-			},
-			{
-				cover: '/static/images/list/1.jpg',
-				title: '米家空调',
-				desc: '1.5匹频率',
-				oPrice: 2699,
-				pPrice: 1366
-			},
-			{
-				cover: '/static/images/list/1.jpg',
-				title: '米家空调',
-				desc: '1.5匹频率',
-				oPrice: 2699,
-				pPrice: 1366
-			},
-			{
-				cover: '/static/images/list/1.jpg',
-				title: '米家空调',
-				desc: '1.5匹频率',
-				oPrice: 2699,
-				pPrice: 1366
-			}
-		]
-	}
-];
-
-let demo2 = [
-	{
-		type: 'swipers',
-		data: [
-			{
-				src: '../../static/images/index/banner/1.jpg'
-			},
-			{
-				src: '../../static/images/index/banner/1.jpg'
-			},
-			{
-				src: '../../static/images/index/banner/1.jpg'
-			}
-		]
-	},
-	{
-		type: 'indexNavs',
-		data: [
-			{
-				src: '../../static/images/index/nav/1.png',
-				text: '新品分类'
-			},
-			{
-				src: '../../static/images/index/nav/2.gif',
-				text: '小米众筹'
-			},
-			{
-				src: '../../static/images/index/nav/3.gif',
-				text: '以旧换新'
-			},
-			{
-				src: '../../static/images/index/nav/4.gif',
-				text: '1分拼团'
-			},
-			{
-				src: '../../static/images/index/nav/5.gif',
-				text: '超值特卖'
-			},
-			{
-				src: '../../static/images/index/nav/6.gif',
-				text: '小米秒杀'
-			},
-			{
-				src: '../../static/images/index/nav/7.gif',
-				text: '真心想要'
-			},
-			{
-				src: '../../static/images/index/nav/8.gif',
-				text: '电视热卖'
-			},
-			{
-				src: '../../static/images/index/nav/9.gif',
-				text: '家电热卖'
-			},
-			{
-				src: '../../static/images/index/nav/10.gif',
-				text: '米粉卡'
-			}
-		]
-	},
-	{
-		type: 'commonList',
-		data: [
-			{
-				cover: '/static/images/list/1.jpg',
-				title: '米家空调',
-				desc: '1.5匹频率',
-				oPrice: 2699,
-				pPrice: 1366
-			},
-			{
-				cover: '/static/images/list/1.jpg',
-				title: '米家空调',
-				desc: '1.5匹频率',
-				oPrice: 2699,
-				pPrice: 1366
-			},
-			{
-				cover: '/static/images/list/1.jpg',
-				title: '米家空调',
-				desc: '1.5匹频率',
-				oPrice: 2699,
-				pPrice: 1366
-			},
-			{
-				cover: '/static/images/list/1.jpg',
-				title: '米家空调',
-				desc: '1.5匹频率',
-				oPrice: 2699,
-				pPrice: 1366
-			}
-		]
-	}
-];
 import comSwipers from '@/components/index/com-swiper.vue';
 import comNav from '@/components/index/com-nav.vue';
 import threeAdv from '@/components/index/three-adv.vue';
@@ -363,7 +158,7 @@ export default {
 	methods: {
 		// 初始化数据
 		__init() {
-			api.get('/index_category/data').then(res => {
+			this.api.get('/index_category/data').then(res => {
 				// 获取顶部选项卡
 				this.tabBars = res.category;
 
@@ -406,7 +201,7 @@ export default {
 				obj.firstLoad = 'ing';
 			}
 
-			let data = await api.get('/index_category/' + id + '/data/' + page);
+			let data = await this.api.get('/index_category/' + id + '/data/' + page);
 
 			// 请求完成
 			if (page === 1) {
