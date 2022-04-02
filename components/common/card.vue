@@ -2,12 +2,13 @@
 	<!-- 卡片组件 -->
 	<view class="card">
 		<!-- head -->
-		<view v-if="showHead" class="p-2 main-border-color" :class="getHeadClass">
+		<view v-if="showHead" class="p-2 main-border-color d-flex a-center j-sb" :class="getHeadClass">
 			<slot name="title">
 				<text v-if="headTitle" class="font-md" :class="headTitleWeight ? 'font-weight' : ''">
 					{{ headTitle }}
 				</text>
 			</slot>
+			<slot name="right"></slot>
 		</view>
 
 		<!-- body -->

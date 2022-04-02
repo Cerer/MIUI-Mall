@@ -1,5 +1,5 @@
 <template>
-	<view class="_popup" :class="popupClass">
+	<view class="_popup" :class="popupClass" @touchmove.stop.prevent="movehandle">
 		<view class="_mask" @tap.stop="$emit('hide')"></view>
 		<view class="_body"><slot></slot></view>
 	</view>
@@ -15,6 +15,7 @@ export default {
 	},
 
 	methods: {
+		// app有用，电脑端运行小程序没用
 		movehandle() {}
 	}
 };

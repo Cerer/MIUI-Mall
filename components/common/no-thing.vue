@@ -1,6 +1,6 @@
 <template>
 	<!-- 空白页 -->
-	<view class="position-absolute all-flex-column all-direction-0">
+	<view class="d-flex flex-column a-center j-center h-100" style="background-color: #F5F5F5;">
 		<image :src="getIcon" mode="widthFix" style="width: 250rpx;"></image>
 		<view class="" style="color: #B2B2B2;">{{ mag }}</view>
 	</view>

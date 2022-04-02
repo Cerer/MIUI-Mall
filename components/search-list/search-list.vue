@@ -1,5 +1,8 @@
 <template>
-	<view class="row p-2 border-bottom border-light-secondary animate__animated animate__fadeIn animate__faster">
+	<view
+		class="row p-2 border-bottom border-light-secondary animate__animated animate__fadeIn animate__faster"
+		@click="openDetail"
+	>
 		<view class="span-6"><image :src="item.titlePic" mode="widthFix" class="w-100"></image></view>
 		<view class="span-14 pl-3 d-flex flex-column">
 			<view class="font-md font-weight">{{ item.title }}</view>
@@ -20,6 +23,14 @@ export default {
 
 	components: {
 		price
+	},
+
+	methods: {
+		openDetail() {
+			uni.navigateTo({
+				url: '/pages/detail/detail?detail=' + JSON.stringify(this.item)
+			});
+		}
 	}
 };
 </script>

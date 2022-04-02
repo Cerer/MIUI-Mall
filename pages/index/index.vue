@@ -5,10 +5,16 @@
 		<!-- 自定义导航栏 -->
 		<view class="d-flex a-center" style="height: 90rpx;">
 			<!-- 左边 -->
-			<view class="d-flex j-center a-center" style="width: 85rpx;"><text class="iconfont icon-xiaoxi1"></text></view>
+			<view class="d-flex j-center a-center" style="width: 85rpx;" @click="clickXiaoxi">
+				<text class="iconfont icon-xiaoxi1"></text>
+			</view>
 
 			<!-- 中间 -->
-			<view class="flex-1 bg-linght-muted rounded d-flex a-center text-linght-muted" style="height: 65rpx;">
+			<view
+				class="flex-1 bg-linght-muted rounded d-flex a-center text-linght-muted"
+				style="height: 65rpx;"
+				@click="clickSearchInput"
+			>
 				<text class="iconfont icon-sousuo mx-2"></text>
 				智能积木
 			</view>
@@ -256,7 +262,23 @@ export default {
 					icon: 'none'
 				});
 			});
+		},
+
+		// #ifdef MP
+		// 小程序点击消息
+		clickXiaoxi() {
+			uni.navigateTo({
+				url: '/pages/msg-list/msg-list'
+			});
+		},
+
+		// 小程序点击搜索
+		clickSearchInput() {
+			uni.navigateTo({
+				url: '/pages/search/search'
+			});
 		}
+		// #endif
 	}
 };
 </script>

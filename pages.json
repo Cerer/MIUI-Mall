@@ -150,7 +150,7 @@
 							"align": "left",
 							"backgroundColor": "#F7F7F7",
 							"borderRadius": "4px",
-							"disabled": true,
+							"disabled": false,
 							"placeholder": "智能积木 越野四驱车",
 							"placeholderColor": "#CCCCCC"
 						},
@@ -170,6 +170,7 @@
 		{
 			"path": "pages/search-list/search-list",
 			"style": {
+				"enablePullDownRefresh": true,
 				"app-plus": {
 					"scrollIndicator": "none", //不需要出现滚动条
 					"titleNView": {
@@ -177,7 +178,7 @@
 							"align": "left",
 							"backgroundColor": "#F7F7F7",
 							"borderRadius": "4px",
-							"disabled": true,
+							"disabled": false,
 							"placeholder": "智能积木 越野四驱车",
 							"placeholderColor": "#CCCCCC"
 						},

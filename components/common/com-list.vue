@@ -25,7 +25,7 @@ export default {
 
 	methods: {
 		openDetail() {
-			uni.navigateTo({
+			uni.redirectTo({
 				url: '/pages/detail/detail?detail=' + JSON.stringify(this.item)
 			});
 		}

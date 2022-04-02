@@ -17,6 +17,10 @@ Vue.component('loading-plus', loadingPlus)
 import api from '@/common/lib/request.js';
 Vue.prototype.api = api;
 
+// 引入utils库
+import util from '@/utils/util.js';
+Vue.prototype.util = util;
+
 
 App.mpType = 'app'
 

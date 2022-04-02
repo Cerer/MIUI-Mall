@@ -332,6 +332,7 @@ export default {
 
 				// 基本信息
 				this.detail = res;
+				this.detail.num = 1;
 
 				//修改页面标题
 				uni.setNavigationBarTitle({
