@@ -31,8 +31,13 @@
 			@scroll="onRightScroll"
 		>
 			<view class="row right-scroll-item" v-for="(item, index) of list" :key="index">
-				<view class="span24-8 text-center py-2" v-for="(item2, index2) of item.list" :key="index2">
-					<image :src="item2.src" style="width: 120upx;height: 120upx;"></image>
+				<view
+					class="span24-8 text-center py-2"
+					v-for="(item2, index2) of item.list"
+					:key="index2"
+					@click="openDetail(item2)"
+				>
+					<image :src="item2.cover" style="width: 120upx;height: 120upx;"></image>
 					<text class="d-block">{{ item2.name }}</text>
 				</view>
 			</view>
@@ -88,26 +93,7 @@ export default {
 		this.getData();
 	},
 
-	onReady() {
-		this.getElInfo({
-			all: 'left',
-			size: true,
-			rect: true
-		}).then(data => {
-			this.leftDomsTop = data.map(v => {
-				this.catrItemHeight = v.height; //获取到每个节点的高度
-				return v.top;
-			});
-		});
-
-		this.getElInfo({
-			all: 'right',
-			size: false,
-			rect: true
-		}).then(data => {
-			this.rightDomsTop = data.map(v => v.top);
-		});
-	},
+	onReady() {},
 
 	methods: {
 		// 获取节点信息
@@ -129,27 +115,50 @@ export default {
 
 		// 获取数据
 		getData() {
-			for (let i = 0; i <= 20; i++) {
-				this.cate.push({
-					name: '分类' + i
-				});
+			this.api.get('/category/app_category').then(res => {
+				if (res) {
+					let cate = [];
+					let list = [];
+					res.forEach(i => {
+						cate.push({
+							id: i.id,
+							name: i.name
+						});
 
-				this.list.push({
-					list: []
-				});
-			}
-
-			for (let i = 0; i < this.list.length; i++) {
-				for (let j = 0; j < 24; j++) {
-					this.list[i].list.push({
-						src: '/static/images/list/1.jpg',
-						name: `分类${i}-商品${j}`
+						list.push({
+							list: i.app_category_items
+						});
 					});
-				}
-			}
 
-			this.$nextTick(() => {
-				this.showLoading = false;
+					this.cate = cate;
+					this.list = list;
+				} else {
+					this.cate = [];
+					this.list = [];
+				}
+
+				this.$nextTick(() => {
+					this.getElInfo({
+						all: 'left',
+						size: true,
+						rect: true
+					}).then(data => {
+						this.leftDomsTop = data.map(v => {
+							this.catrItemHeight = v.height; //获取到每个节点的高度
+							return v.top;
+						});
+					});
+
+					this.getElInfo({
+						all: 'right',
+						size: false,
+						rect: true
+					}).then(data => {
+						this.rightDomsTop = data.map(v => v.top);
+					});
+
+					this.showLoading = false;
+				});
 			});
 		},
 
@@ -168,6 +177,18 @@ export default {
 					this.activeIndex = k;
 					return false;
 				}
+			});
+		},
+
+		// 打开商品详情页
+		openDetail(item) {
+			uni.navigateTo({
+				url:
+					'/pages/detail/detail?detail=' +
+					JSON.stringify({
+						id: item.goods_id,
+						title: item.name
+					})
 			});
 		}
 	}
