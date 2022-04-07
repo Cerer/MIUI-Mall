@@ -63,9 +63,16 @@ export default {
 			this.inputValue = +val;
 		},
 
+		//处理库存问题
 		max(newVal, oldVal) {
+			// 切换时输入数据超过最大库存，返回改属性的最大库存值
 			if (this.inputValue > newVal) {
 				this.inputValue = newVal;
+			}
+
+			// 切换前库存为0时，切换后输入数据框返回1
+			if (this.inputValue === 0 && newVal > 0) {
+				this.inputValue = 1;
 			}
 		}
 	},

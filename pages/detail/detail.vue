@@ -13,7 +13,7 @@
 		<!-- 属性选择 -->
 		<view class="p-2">
 			<view class="rounded border bg-linght-muted">
-				<uni-list-item showArrow clickable @click="show('attr')">
+				<uni-list-item v-if="detail.sku_type === 1" showArrow clickable @click="show('attr')">
 					<view slot="body">
 						<view class="d-flex font">
 							<text class="mr-2 text-muted">已选</text>
@@ -105,12 +105,13 @@
 
 			<!-- 按钮 -->
 			<view
-				class="main-bg-color text-white font-md all-flex-row"
-				hover-class="main-bg-hover-color"
+				class="text-white font-md all-flex-row"
+				:class="maxStock === 0 ? 'bg-secondary' : 'main-bg-color'"
+				:hover-class="maxStock !== 0 ? 'main-bg-hover-color' : ''"
 				style="height: 100rpx;margin-left: -30rpx;margin-right: -30rpx;"
 				@tap.stop="addCart"
 			>
-				加入购物车
+				{{ maxStock === 0 ? '暂无库存' : '加入购物车' }}
 			</view>
 		</com-popup>
 
@@ -220,14 +221,13 @@ export default {
 		// 拿到选中skus索引
 		checkedSkusIndex() {
 			let goodsSkus = this.detail.goodsSkus;
-			if (goodsSkus) {
-				let index = goodsSkus.findIndex(item => {
-					return item.skusText === this.checkedSkus;
-				});
-				return index;
-			} else {
+			if (!Array.isArray(goodsSkus)) {
 				return -1;
 			}
+			let index = goodsSkus.findIndex(item => {
+				return item.skusText === this.checkedSkus;
+			});
+			return index;
 		},
 
 		// 当前选中显示价格
@@ -240,11 +240,15 @@ export default {
 
 		// 最大库存
 		maxStock() {
-			if (this.detail.goodsSkus) {
-				return this.detail.goodsSkus[this.checkedSkusIndex].stock;
-			} else {
+			if (this.detail.sku_type === 0) {
+				return this.detail.stock;
+			}
+
+			if (!Array.isArray(this.detail.goodsSkus)) {
 				return 100;
 			}
+
+			return this.detail.goodsSkus[this.checkedSkusIndex].stock;
 		}
 	},
 
@@ -377,31 +381,34 @@ export default {
 					};
 				});
 
-				// 商品规格
-				this.selects = res.goodsSkusCard.map(v => {
-					let valueList = v.goodsSkusCardValue.map(i => {
+				// 多规格商品才做处理
+				if (this.detail.sku_type === 1) {
+					// 商品规格
+					this.selects = res.goodsSkusCard.map(v => {
+						let valueList = v.goodsSkusCardValue.map(i => {
+							return {
+								id: i.id,
+								name: i.value
+							};
+						});
+
 						return {
-							id: i.id,
-							name: i.value
+							id: v.id,
+							title: v.name,
+							selectIndex: 0,
+							list: valueList
 						};
 					});
 
-					return {
-						id: v.id,
-						title: v.name,
-						selectIndex: 0,
-						list: valueList
-					};
-				});
-
-				//商品规格（匹配价格）
-				this.detail.goodsSkus.forEach(i => {
-					let nameList = [];
-					for (let key in i.skus) {
-						nameList.push(i.skus[key].value);
-					}
-					i.skusText = nameList.join(',');
-				});
+					//商品规格（匹配价格）
+					this.detail.goodsSkus.forEach(i => {
+						let nameList = [];
+						for (let key in i.skus) {
+							nameList.push(i.skus[key].value);
+						}
+						i.skusText = nameList.join(',');
+					});
+				}
 			});
 		},
 
@@ -430,6 +437,8 @@ export default {
 
 		// 加入购物车
 		addCart() {
+			if (this.maxStock === 0) return;
+
 			// 组织数据
 			let goods = this.detail;
 			goods['checked'] = false;

@@ -1,20 +1,6 @@
 export default {
 	state: {
-		list: [{
-				name: '关关雎鸠',
-				phone: '130****5410',
-				path: '广州市 天河区 **街道',
-				detailPath: '**街道',
-				isDefault: false
-			},
-			{
-				name: '关关雎鸠',
-				phone: '130****5410',
-				path: '广州市 天河区 **街道',
-				detailPath: '**街道',
-				isDefault: false
-			}
-		]
+		list: []
 	},
 
 	getters: {
@@ -25,6 +11,14 @@ export default {
 	},
 
 	mutations: {
+		// 覆盖收货地址
+		updatePathList(state, {
+			refresh,
+			list
+		}) {
+			state.list = refresh ? list : [...state.list, ...list]
+		},
+
 		// 创建收货地址
 		createPath(state, item) {
 			state.list.unshift(item);

@@ -13,15 +13,21 @@
 				<input class="font-md" v-model="formData.phone" />
 			</view>
 		</uni-list-item>
+		<uni-list-item>
+			<view slot="body" class="d-flex a-center">
+				<view class="font-md text-secondary">邮编：</view>
+				<input class="font-md" v-model="formData.zip" />
+			</view>
+		</uni-list-item>
 
 		<view class="cutLine"></view>
 
 		<uni-list-item>
-			<view slot="body" class="d-flex a-center">
-				<view class="font-md text-secondary">所在地区：</view>
+			<view slot="body" class="d-flex a-center w-100">
+				<view class="font-md text-secondary" style="width: 200rpx;">所在地区：</view>
 				<input
-					class="font-md"
-					v-model="formData.path"
+					class="font-md w-100"
+					v-model="path"
 					disabled
 					placeholder="请选择所在地区"
 					@click="showMulLinkageThreePicker"
@@ -38,7 +44,7 @@
 		<uni-list-item>
 			<view slot="body" class="d-flex a-center">
 				<view class="font-md text-secondary">详细地址：</view>
-				<input class="font-md" v-model="formData.detailPath" />
+				<input class="font-md" v-model="formData.address" />
 			</view>
 		</uni-list-item>
 
@@ -47,9 +53,9 @@
 		<uni-list-item
 			title="设为默认地址："
 			showSwitch
-			:switchChecked="formData.isDefault"
+			:switchChecked="formData.default ? true : false"
 			switchColor="#FD6801"
-			@switchChange="formData.isDefault = $event.value"
+			@switchChange="formData.default = $event.value ? 1 : 0"
 		></uni-list-item>
 
 		<view class="p-3">
@@ -65,7 +71,6 @@
 </template>
 
 <script>
-import { mapMutations, mapActions } from 'vuex';
 import uniListItem from '@/components/uni-ui/uni-list-item/uni-list-item.vue';
 import mpvueCityPicker from '@/components/uni-ui/mpvue-citypicker/mpvueCityPicker.vue';
 export default {
@@ -78,9 +83,12 @@ export default {
 			formData: {
 				name: '',
 				phone: '',
-				path: '',
-				detailPath: '',
-				isDefault: false
+				zip: '',
+				province: '',
+				city: '',
+				district: '',
+				address: '',
+				default: 0
 			},
 
 			// 多级选择器
@@ -91,6 +99,14 @@ export default {
 			isEdit: false,
 			formIndex: -1
 		};
+	},
+
+	computed: {
+		path() {
+			if (this.formData.province) {
+				return this.formData.province + '-' + this.formData.city + '-' + this.formData.district;
+			}
+		}
 	},
 
 	onLoad(e) {
@@ -123,10 +139,6 @@ export default {
 	},
 
 	methods: {
-		// ...mapMutations(['createPath']),
-
-		...mapActions(['doCreatePath', 'doUpdatePath']),
-
 		// 显示三级联动选择
 		showMulLinkageThreePicker() {
 			this.$refs.mpvueCityPicker.show();
@@ -134,7 +146,11 @@ export default {
 
 		// 多级联动选中
 		onConfirm(e) {
-			this.formData.path = e.label;
+			let arr = e.label.split('-');
+			this.formData.province = arr[0];
+			this.formData.city = arr[1];
+			this.formData.district = arr[2];
+
 			this.pickerValue = e.value;
 		},
 
@@ -142,14 +158,36 @@ export default {
 		submit() {
 			// 编辑
 			if (this.isEdit) {
-				let itemObj = {
-					item: this.formData,
-					index: this.formIndex
-				};
-				this.doUpdatePath(itemObj);
+				this.api
+					.post('/useraddresses/' + this.formData.id, this.formData, {
+						token: true
+					})
+					.then(res => {
+						uni.showToast({
+							title: '修改成功',
+							icon: 'none'
+						});
+						uni.navigateBack({
+							delta: 1
+						});
+					});
+				return;
 			} else {
 				//新增
-				this.doCreatePath(this.formData);
+				this.api
+					.post('/useraddresses', this.formData, {
+						token: true
+					})
+					.then(res => {
+						uni.showToast({
+							title: '创建成功',
+							icon: 'none'
+						});
+
+						uni.navigateBack({
+							delta: 1
+						});
+					});
 			}
 		}
 	}

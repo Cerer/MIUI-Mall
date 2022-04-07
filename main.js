@@ -21,6 +21,23 @@ Vue.prototype.api = api;
 import util from '@/utils/util.js';
 Vue.prototype.util = util;
 
+// 权限跳转验证
+Vue.prototype.navigateTo = (options) => {
+	// 判断用户是否登录
+	if (!store.state.user.loginStatus) {
+		uni.showToast({
+			title: '请先登录',
+			icon: 'none'
+		});
+
+		return uni.navigateTo({
+			url: '/pages/login/login'
+		});
+	}
+
+	uni.navigateTo(options);
+}
+
 
 App.mpType = 'app'
 

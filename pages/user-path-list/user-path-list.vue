@@ -4,57 +4,52 @@
 		<block v-for="(item, index) in list" :key="index">
 			<uni-swipe-action :right-options="options">
 				<uni-swipe-action-item :right-options="options" @click="bindClick($event, index)">
-					<uni-list-item showArrow @click="choose(item)" clickable>
+					<uni-list-item showArrow clickable @click="choose(item)">
 						<view slot="body" style="font-size: 28rpx;">
 							<view class="text-secondary">
 								<view class="d-flex a-center">
 									<text class="main-text-color">{{ item.name }}</text>
 									{{ item.phone }}
-									<text v-if="item.isDefault" class="main-text-color">[默认]</text>
+									<text v-if="index === 0 && item.last_used_time !== null" class="main-text-color">[默认]</text>
 								</view>
 
-								<view>{{ item.path }}</view>
+								<view>{{ item.province }} {{ item.city }} {{ item.district }}</view>
 
-								<view>{{ item.detailPath }}</view>
+								<view>{{ item.address }}</view>
 							</view>
 						</view>
 					</uni-list-item>
 				</uni-swipe-action-item>
 			</uni-swipe-action>
 		</block>
+
+		<!-- 没有数据 -->
+		<no-thing v-if="list.length === 0" mag="空空如也"></no-thing>
+
+		<!-- 加载更多 -->
+		<view class="all-flex-row text-linght-muted font-md py-3">{{ loadText }}</view>
 	</view>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 import uniListItem from '@/components/uni-ui/uni-list-item/uni-list-item.vue';
 import uniSwipeAction from '@/components/uni-ui/uni-swipe-action/uni-swipe-action.vue';
 import uniSwipeActionItem from '@/components/uni-ui/uni-swipe-action-item/uni-swipe-action-item.vue';
+import noThing from '@/components/common/no-thing.vue';
+
 export default {
 	components: {
 		uniListItem,
 		uniSwipeAction,
-		uniSwipeActionItem
+		uniSwipeActionItem,
+		noThing
 	},
 
 	computed: {
 		...mapState({
 			list: state => state.path.list
 		})
-	},
-
-	onNavigationBarButtonTap(e) {
-		if (e.index === 0) {
-			uni.navigateTo({
-				url: '/pages/user-path-edit/user-path-edit'
-			});
-		}
-	},
-
-	onLoad(e) {
-		if (e.type === 'choose') {
-			this.isChoose = true;
-		}
 	},
 
 	data() {
@@ -73,29 +68,145 @@ export default {
 						backgroundColor: '#dd524d'
 					}
 				}
-			]
+			],
+
+			// 分页码
+			page: 1,
+
+			// 1.上拉加载更多 2.加载中... 3.没有更多了
+			loadText: '上拉加载更多'
 		};
 	},
 
+	onNavigationBarButtonTap(e) {
+		if (e.index === 0) {
+			uni.navigateTo({
+				url: '/pages/user-path-edit/user-path-edit'
+			});
+		}
+	},
+
+	onLoad(e) {
+		if (e.type === 'choose') {
+			this.isChoose = true;
+		}
+
+		this.getData();
+	},
+
+	onShow() {
+		this.getData();
+	},
+
+	// 下拉刷新
+	onPullDownRefresh() {
+		this.page = 1;
+		this.getData(() => {
+			uni.stopPullDownRefresh();
+		});
+	},
+
+	// 上拉刷新
+	onReachBottom() {
+		// 是否已经处于加载状态
+		if (this.loadText !== '上拉加载更多') return;
+
+		// 改变加载状态
+		this.loadText = '加载中...';
+		this.page++;
+
+		// 请求数据
+		this.getData(false);
+	},
+
 	methods: {
-		...mapActions(['doDelPath']),
+		...mapMutations(['updatePathList']),
+
+		// 获取数据
+		getData(callback = false) {
+			this.api
+				.get(
+					'/useraddresses/' + this.page,
+					{},
+					{
+						token: true
+					}
+				)
+				.then(res => {
+					let refresh = this.page === 1 ? true : false;
+					this.updatePathList({
+						refresh: refresh,
+						list: res
+					});
+
+					this.loadText = res.length < 10 ? '没有更多了' : '上拉加载更多';
+
+					if (typeof callback === 'function') {
+						uni.showToast({
+							title: '刷新成功',
+							icon: 'none'
+						});
+						callback();
+					}
+				})
+				.catch(err => {
+					if (typeof callback === 'function') {
+						callback();
+					}
+
+					if (this.page > 1) {
+						// 页码回归上一页
+						this.page--;
+						this.loadText = '上拉加载更多';
+					}
+				});
+		},
 
 		// 点击滑块
 		bindClick(e, index) {
-			switch (e.index) {
-				case 0: //修改
-					let obj = JSON.stringify({
-						item: this.list[index],
-						index: index
-					});
-					uni.navigateTo({
-						url: '/pages/user-path-edit/user-path-edit?data=' + obj
-					});
-					break;
-				case 1: //删除
-					this.doDelPath(index);
-					break;
+			let { content } = e;
+			if (content.text === '修改') {
+				let obj = {
+					item: this.list[index],
+					index: index
+				};
+
+				// 加上是否默认
+				obj.item.default = index === 0 && obj.item.last_used_time !== null ? 1 : 0;
+
+				uni.navigateTo({
+					url: '/pages/user-path-edit/user-path-edit?data=' + JSON.stringify(obj)
+				});
+			} else if (content.text === '删除') {
+				this.delData(index);
 			}
+		},
+
+		// 删除数据
+		delData(index) {
+			let self = this;
+			uni.showModal({
+				content: '要删除改收货地址吗?',
+				success(res) {
+					if (res.confirm) {
+						self.api
+							.del(
+								'/useraddresses/' + self.list[index].id,
+								{},
+								{
+									token: true
+								}
+							)
+							.then(item => {
+								uni.showToast({
+									title: '删除成功',
+									icon: 'none'
+								});
+								self.getData();
+							});
+					}
+				}
+			});
 		},
 
 		//点击选择收货地址

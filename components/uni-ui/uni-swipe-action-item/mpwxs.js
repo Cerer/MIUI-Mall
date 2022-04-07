@@ -102,14 +102,23 @@ export default {
 			}
 		},
 		onClickForPC(index, item, position) {
+			// // #ifdef H5
+			// if(!isPC()) return
+			// // #endif
+			// this.$emit('click', {
+			// 	content: item,
+			// 	index,
+			// 	position
+			// })
+			
 			// #ifdef H5
 			if(!isPC()) return
-			// #endif
 			this.$emit('click', {
 				content: item,
 				index,
 				position
 			})
+			// #endif
 		},
 		getButtonSize() {
 			const views = uni.createSelectorQuery().in(this)

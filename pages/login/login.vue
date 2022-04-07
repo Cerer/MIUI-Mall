@@ -51,6 +51,7 @@
 
 <script>
 import uniNavBar from '@/components/uni-ui/uni-nav-bar/uni-nav-bar.vue';
+import { mapMutations } from 'vuex';
 
 export default {
 	components: {
@@ -70,22 +71,24 @@ export default {
 			// 验证规则
 			rules: {
 				userName: [
-					{
-						rule: /^[a-zA-Z]\w{5,7}$/,
-						msg: '用户名必须以字母开头，长度在6~18之间，只包含字母、数字和下划线'
-					}
+					// {
+					// 	rule: /^[a-zA-Z]\w{5,7}$/,
+					// 	msg: '用户名必须以字母开头，长度在6~18之间，只包含字母、数字和下划线'
+					// }
 				],
 				password: [
-					{
-						rule: /^.{6,20}$/,
-						msg: '密码长度必须为6~20个字符'
-					}
+					// {
+					// 	rule: /^.{6,20}$/,
+					// 	msg: '密码长度必须为6~20个字符'
+					// }
 				]
 			}
 		};
 	},
 
 	methods: {
+		...mapMutations(['login']),
+
 		// 点击返回
 		goBack() {
 			uni.navigateBack({
@@ -129,19 +132,30 @@ export default {
 			if (!this.validata('password')) return;
 
 			console.log('提交成功');
-
 			// 防止多次点击
-			uni.showLoading({
-				title: '登录中...',
-				mask: true
-			});
+			// uni.showLoading({
+			// 	title: '登录中...',
+			// 	mask: true
+			// });
 
-			setTimeout(() => {
-				uni.hideLoading(); //隐藏登录中状态
-				uni.navigateBack({
-					delta: 1
+			this.api
+				.post('/login', {
+					username: this.userName,
+					password: this.password
+				})
+				.then(res => {
+					// 状态存储
+					this.login(res);
+					uni.showToast({
+						title: '登录成功',
+						icon: 'none'
+					});
+
+					uni.hideLoading(); //隐藏登录中状态
+					uni.navigateBack({
+						delta: 1
+					});
 				});
-			}, 3000);
 		},
 
 		// input聚焦事件

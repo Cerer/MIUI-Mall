@@ -1,135 +1,6 @@
 export default {
 	state: {
-		list: [{
-				checked: false,
-				id: '1',
-				title: '商品标题11',
-				cover: '/static/images/list/1.jpg',
-				// 选中商品属性
-				attrs: [{
-						title: '颜色',
-						selectIndex: 0,
-						list: [{
-							name: '火焰红'
-						}, {
-							name: '炭黑'
-						}, {
-							name: '冰川兰'
-						}]
-					},
-					{
-						title: '容量',
-						selectIndex: 0,
-						list: [{
-							name: '64GB'
-						}, {
-							name: '128GB'
-						}]
-					},
-					{
-						title: '套餐',
-						selectIndex: 0,
-						list: [{
-							name: '标配'
-						}, {
-							name: '套餐一'
-						}, {
-							name: '套餐二'
-						}]
-					}
-				],
-				pPrice: 3360,
-				num: 1,
-				minNum: 1,
-				maxNum: 100
-			},
-			{
-				checked: false,
-				id: '2',
-				title: '商品标题11',
-				cover: '/static/images/list/1.jpg',
-				// 选中商品属性
-				attrs: [{
-						title: '颜色',
-						selectIndex: 0,
-						list: [{
-							name: '火焰红'
-						}, {
-							name: '炭黑'
-						}, {
-							name: '冰川兰'
-						}]
-					},
-					{
-						title: '容量',
-						selectIndex: 0,
-						list: [{
-							name: '64GB'
-						}, {
-							name: '128GB'
-						}]
-					},
-					{
-						title: '套餐',
-						selectIndex: 0,
-						list: [{
-							name: '标配'
-						}, {
-							name: '套餐一'
-						}, {
-							name: '套餐二'
-						}]
-					}
-				],
-				pPrice: 3360,
-				num: 1,
-				minNum: 1,
-				maxNum: 100
-			},
-			{
-				checked: false,
-				id: '3',
-				title: '商品标题11',
-				cover: '/static/images/list/1.jpg',
-				// 选中商品属性
-				attrs: [{
-						title: '颜色',
-						selectIndex: 0,
-						list: [{
-							name: '火焰红'
-						}, {
-							name: '炭黑'
-						}, {
-							name: '冰川兰'
-						}]
-					},
-					{
-						title: '容量',
-						selectIndex: 0,
-						list: [{
-							name: '64GB'
-						}, {
-							name: '128GB'
-						}]
-					},
-					{
-						title: '套餐',
-						selectIndex: 0,
-						list: [{
-							name: '标配'
-						}, {
-							name: '套餐一'
-						}, {
-							name: '套餐二'
-						}]
-					}
-				],
-				pPrice: 3360,
-				num: 1,
-				minNum: 1,
-				maxNum: 100
-			}
-		],
+		list: [],
 
 		// 放置选中的数据id
 		selectedList: [],
@@ -138,8 +9,10 @@ export default {
 		popupShow: 'none',
 
 		// 当前商品索引
-		popupIndex: -1
+		popupIndex: -1,
 
+		// 当前商品属性数据
+		popupData: {}
 	},
 
 	getters: {
@@ -153,7 +26,7 @@ export default {
 			let total = 0;
 			state.list.forEach(v => {
 				if (state.selectedList.indexOf(v.id) > -1) {
-					total += v.pPrice * v.num;
+					total += v.pprice * v.num;
 				}
 			});
 			return total;
@@ -162,15 +35,15 @@ export default {
 		// 禁用全选
 		disabledSelectAll: (state) => {
 			return state.list.length === 0;
-		},
-
-		// 拿到当前需要修改属性的商品
-		popupData: (state) => {
-			return state.popupIndex > -1 ? state.list[state.popupIndex] : {}
 		}
 	},
 
 	mutations: {
+		// 初始化数据
+		initCartData(state, list) {
+			state.list = list;
+		},
+
 		// 选中/取消某一个商品
 		selectItem(state, index) {
 			let id = state.list[index].id;
@@ -233,13 +106,19 @@ export default {
 		doShowPopup({
 			commit,
 			state
-		}, index) {
-			commit('initPopupIndex', index)
+		}, {
+			index,
+			data
+		}) {
+			commit('initPopupIndex', index);
+			state.popupData = data;
+			state.popupData.item = state.list[index];
 			state.popupShow = 'show';
 		},
 
 		// 隐藏属性选显卡
 		doHidePopup({
+			commit,
 			state
 		}) {
 			state.popupShow = 'hide';
@@ -266,6 +145,7 @@ export default {
 				content: "是否删除选中数据?",
 				success() {
 					commit('delGoods');
+					commit('unSelectedAll');
 					uni.showToast({
 						title: "删除成功",
 						icon: "none"

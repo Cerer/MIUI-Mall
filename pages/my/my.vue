@@ -16,27 +16,29 @@
 			<image src="/static/images/my/bg.jpg" style="height: 320rpx;width: 100%;"></image>
 			<view class="d-flex a-center position-absolute left-0 right-0" style="bottom: 50rpx;">
 				<image
-					src="/static/images/index/contentImag/demo6.jpg"
+					:src="loginStatus ? userInfo.avatar : '/static/images/index/contentImag/demo6.jpg'"
 					style="width: 145rpx;height: 145rpx;border: 5rpx solid #f8f9fa;"
 					class="rounded-circle ml-4"
 				></image>
-				<navigator url="../login/login"><view class="ml-2 text-white font-md">关关雎鸠</view></navigator>
+				<view class="ml-2 text-white font-md" @click="openLogin">
+					{{ loginStatus ? userInfo.nickname : '登录/注册' }}
+				</view>
 
 				<view
 					class="all-flex-row a-self-end ml-auto px-2"
 					style="height: 70rpx;background: #FFD43F;color: #CC4A00;border-top-left-radius: 40rpx;border-bottom-left-radius: 40rpx;"
 				>
 					<view class="iconfont icon-huangguan line-h mr-2"></view>
-					会员积分 1.99
+					会员积分 0.00
 				</view>
 			</view>
 		</view>
 
 		<!-- 图片分类 -->
 		<card>
-			<view slot="title" class="d-flex a-center j-sb">
+			<view slot="title" class="d-flex a-center j-sb w-100">
 				<text class="font-md font-weight">我的订单</text>
-				<view class="text-secondary font" @click="navigate('order')">
+				<view class="text-secondary font" @click="navigate('order', true)">
 					全部订单
 					<text class="iconfont icon-you font"></text>
 				</view>
@@ -63,7 +65,7 @@
 			:extra-icon="item.extraIcon"
 			showArrow
 			:title="item.title"
-			@click="navigate('user-set')"
+			@click="navigate('user-set', false)"
 		/>
 
 		<view class="cutLine"></view>
@@ -75,7 +77,7 @@
 			title="更多设置"
 			:to="`/pages/user-set/user-set`"
 		></uni-list-item>
-		
+
 		<view style="height: 80rpx;"></view>
 	</view>
 </template>
@@ -84,6 +86,8 @@
 import loading from '@/common/mixin/loading.js';
 import card from '@/components/common/card.vue';
 import uniListItem from '@/components/uni-ui/uni-list-item/uni-list-item.vue';
+import { mapState } from 'vuex';
+
 export default {
 	mixins: [loading],
 
@@ -164,8 +168,30 @@ export default {
 		};
 	},
 
+	computed: {
+		...mapState({
+			loginStatus: state => state.user.loginStatus,
+			userInfo: state => state.user.userInfo
+		})
+	},
+
 	methods: {
-		navigate(path) {
+		// 跳转登录
+		openLogin() {
+			if (!this.loginStatus) {
+				uni.navigateTo({
+					url: '../login/login'
+				});
+			}
+		},
+
+		navigate(path, check = false) {
+			if (check) {
+				return this.navigateTo({
+					url: `/pages/${path}/${path}`
+				});
+			}
+
 			uni.navigateTo({
 				url: `/pages/${path}/${path}`
 			});

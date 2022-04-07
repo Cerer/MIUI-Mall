@@ -23,16 +23,8 @@
 		<!-- 购物车商品列表 -->
 		<view v-else class="bg-white px-1">
 			<!-- 列表 -->
-			<view
-				class="d-flex a-center py-3 border-bottom border-light-secondary"
-				v-for="(item, index) of list"
-				:key="index"
-			>
-				<label
-					class="radio all-flex-row flex-shrink"
-					style="width: 100rpx;height: 100rpx;"
-					@click="selectItem(index)"
-				>
+			<view class="d-flex a-center py-3 border-bottom border-light-secondary" v-for="(item, index) of list" :key="index">
+				<label class="radio all-flex-row flex-shrink" style="width: 100rpx;height: 100rpx;" @click="selectItem(index)">
 					<radio :value="item.id" color="#FD6801" :checked="item.checked"></radio>
 				</label>
 
@@ -45,27 +37,25 @@
 				<view class="flex-1 d-flex flex-column pl-2">
 					<view class="text-dark" style="font-size: 35rpx;">{{ item.title }}</view>
 
-					<!-- 属性规格 -->
+					<!-- 属性规格-->
 					<view
+						v-if="item.skus_type === 1"
 						class="d-flex text-linght-muted mb-1"
 						:class="isEdit ? 'p-1 bg-linght-muted mb-2' : ''"
-						@tap.stop="doShowPopup(index)"
+						@tap.stop="showPopup(item, index)"
 					>
-						<text class="mr-1" v-for="(item2, index2) of item.attrs" :key="index2">
-							{{ item2.list[item2.selectIndex].name }}
-						</text>
-
+						{{ item.skusText }}
 						<view v-if="isEdit" class="iconfont icon-xia font ml-auto"></view>
 					</view>
 
 					<view class="d-flex j-sb mt-auto">
-						<price>{{ item.pPrice }}</price>
+						<price>{{ item.pprice }}</price>
 						<view class="a-self-end">
 							<uni-number-box
 								:min="item.minNum"
 								:max="item.maxNum"
 								:value="item.num"
-								@change="item.num = $event"
+								@change="changeNum($event, item, index)"
 							></uni-number-box>
 						</view>
 					</view>
@@ -125,58 +115,8 @@
 			</template>
 		</view>
 
-		<com-popup :popupClass="popupShow" @hide="doHidePopup">
-			<!-- 商品信息 -->
-			<view class="d-flex a-center" style="height: 275rpx;">
-				<image
-					src="/static/images/cate/cate_01.png"
-					mode="widthFix"
-					style="width: 180rpx;height: 180rpx;"
-					class="border rounded"
-				></image>
-				<view class="pl-2">
-					<price priceSize="font-lg" unitSize="font">3369</price>
-					<view class="d-block">
-						<text class="mr-1" v-for="(item, index) of popupData.attrs" :key="index">
-							{{ item.list[item.selectIndex].name }}
-						</text>
-					</view>
-				</view>
-			</view>
-
-			<!-- 表单部分 -->
-			<scroll-view scroll-y class="w-100" style="height: 660rpx;">
-				<card
-					v-for="(item, index) in popupData.attrs"
-					:key="index"
-					:headTitle="item.title"
-					:headTitleWeight="false"
-					:headBorderBottom="false"
-				>
-					<radio-groups :label="item" :selectIndex.sync="item.selectIndex"></radio-groups>
-				</card>
-
-				<view class="d-flex j-sb a-center p-2 border-top border-light-secondary">
-					<text>购买数量</text>
-					<uni-number-box
-						:min="popupData.minNum"
-						:max="popupData.maxNum"
-						:value="popupData.num"
-						@change="popupData.num = $event"
-					></uni-number-box>
-				</view>
-			</scroll-view>
-
-			<!-- 按钮 -->
-			<view
-				class="main-bg-color text-white font-md all-flex-row"
-				hover-class="main-bg-hover-color"
-				style="height: 100rpx;margin-left: -30rpx;margin-right: -30rpx;"
-				@tap.stop="doHidePopup"
-			>
-				确定
-			</view>
-		</com-popup>
+		<!-- 属性弹出框 -->
+		<sku-popup></sku-popup>
 	</view>
 </template>
 
@@ -186,10 +126,8 @@ import loading from '@/common/mixin/loading.js';
 import uniNavBar from '@/components/uni-ui/uni-nav-bar/uni-nav-bar.vue';
 import price from '@/components/common/price.vue';
 import uniNumberBox from '@/components/uni-ui/uni-number-box/uni-number-box.vue';
-import comPopup from '@/components/common/com-popup.vue';
-import card from '@/components/common/card.vue';
-import radioGroups from '@/components/common/radio-group.vue';
 import comList from '@/components/common/com-list.vue';
+import skuPopup from '@/components/cart/sku-popup.vue';
 export default {
 	mixins: [loading],
 
@@ -197,16 +135,13 @@ export default {
 		uniNavBar,
 		price,
 		uniNumberBox,
-		comPopup,
-		card,
-		radioGroups,
-		comList
+		comList,
+		skuPopup
 	},
 
 	computed: {
 		...mapState({
-			list: state => state.cart.list,
-			popupShow: state => state.cart.popupShow
+			list: state => state.cart.list
 		}),
 
 		...mapGetters(['checkedAll', 'totalPrice', 'disabledSelectAll', 'popupData'])
@@ -215,50 +150,135 @@ export default {
 	data() {
 		return {
 			isEdit: false,
-			hotList: [
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				}
-			]
+			hotList: []
 		};
 	},
 
-	onLoad() {},
+	onShow() {
+		this.getData();
+	},
+
+	// 下拉刷新
+	onPullDownRefresh() {
+		this.getData();
+	},
 
 	methods: {
-		...mapMutations(['selectItem']),
+		...mapMutations(['selectItem', 'initCartData', 'unSelectedAll']),
 
 		...mapActions(['doShowPopup', 'doHidePopup', 'doSelectedAll', 'doDelGoods']),
+
+		//获取数据
+		getData() {
+			let self = this;
+			// 获取购物车数据
+			self.api
+				.get(
+					'/cart',
+					{},
+					{
+						token: true,
+						toase: false
+					}
+				)
+				.then(res => {
+					// 取消全选
+					this.unSelectedAll();
+					
+					// 赋值
+					self.initCartData(res);
+					uni.stopPullDownRefresh();
+				})
+				.catch(err => {
+					uni.stopPullDownRefresh();
+				});
+
+			// 获取热门列表数据
+			self.api.get('/goods/hotlist').then(res => {
+				self.hotList = res.map(v => {
+					return {
+						id: v.id,
+						cover: v.cover,
+						title: v.title,
+						desc: v.desc,
+						oprice: v.min_price,
+						pprice: v.min_oprice
+					};
+				});
+			});
+		},
 
 		// 订单结算
 		orderConfirm() {
 			uni.navigateTo({
 				url: '/pages/order-confirm/order-confirm'
+			});
+		},
+
+		// 编辑显示属性弹框
+		showPopup(item, index) {
+			let self = this;
+			if (!self.isEdit) return;
+			self.api
+				.get(
+					`/cart/${item.id}/sku`,
+					{},
+					{
+						token: true
+					}
+				)
+				.then(res => {
+					// 商品规格
+					let check = item.skusText.split(',');
+					res.selects = res.goods_skus_card.map((v, index1) => {
+						let selectIndex = 0;
+						let valueList = v.goods_skus_card_value.map((i, index2) => {
+							if (check[index1] === i.value) {
+								selectIndex = index2;
+							}
+
+							return {
+								id: i.id,
+								name: i.value
+							};
+						});
+
+						return {
+							id: v.id,
+							title: v.name,
+							selectIndex,
+							list: valueList
+						};
+					});
+
+					//商品规格（匹配价格）
+					res.goods_skus.forEach(i => {
+						let nameList = [];
+						for (let key in i.skus) {
+							nameList.push(i.skus[key].value);
+						}
+						i.skusText = nameList.join(',');
+					});
+
+					self.doShowPopup({
+						index,
+						data: res
+					});
+				});
+		},
+
+		// 修改商品数量
+		changeNum(e, item, index) {
+			let self = this;
+			if (item.num === e) return;
+
+			uni.showLoading({
+				title: '加载中...'
+			});
+
+			self.api.post('/cart/updatenumber/' + item.id, { num: e }, { token: true }).then(res => {
+				item.num = e;
+				uni.hideLoading();
 			});
 		}
 	}
