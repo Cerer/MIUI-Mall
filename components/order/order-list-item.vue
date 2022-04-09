@@ -1,5 +1,5 @@
 <template>
-	<view class="border-bottom d-flex a-center py-2 border-light-secondary" @click.prevent="open">
+	<view class="border-bottom d-flex a-center py-2 border-light-secondary" @tap.stop="open">
 		<image :src="item.cover" mode="widthFix" style="width: 150rpx;height: 150rpx;" class="rounded mx-2 flex-shrink"></image>
 
 		<view class="flex-1">
@@ -25,7 +25,7 @@ export default {
 	methods: {
 		open() {
 			uni.navigateTo({
-				url: '/pages/detail/detail'
+				url: '/pages/detail/detail?detail=' + JSON.stringify(this.item)
 			});
 		}
 	}
