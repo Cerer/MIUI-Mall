@@ -5,6 +5,14 @@ export default {
 
 		// 初始化登录状态
 		this.$store.commit('initUser');
+
+		// 更新购物车数据
+		this.$store.dispatch('updateCartList');
+
+		// 监听购物车更新
+		uni.$on('updateCart', () => {
+			this.$store.dispatch('updateCartList');
+		});
 	},
 	onShow: function() {
 		console.log('App Show');

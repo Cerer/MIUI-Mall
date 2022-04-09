@@ -19,7 +19,16 @@
 				<view class="position-relative" v-show="tabI === tabIndex" style="min-height: 440rpx;">
 					<template v-if="tab.list.length > 0">
 						<view class="p-3">
-							<coupon v-for="(item, index) in tab.list" :key="index" :item="item" :index="index"></coupon>
+							<coupon
+								v-for="(item, index) in tab.list"
+								:key="index"
+								:item="item"
+								:index="index"
+								@onClick="chooseCoupon(item)"
+							>
+								<text v-if="item.disabled">已使用</text>
+								<text v-else>{{ item.status ? '去使用' : validText }}</text>
+							</coupon>
 						</view>
 					</template>
 
@@ -51,69 +60,119 @@ export default {
 					name: '可用',
 					no_thing: 'no_comment',
 					no_mag: '您还没有可以的优惠卷',
-					list: [
-						{
-							title: '手机立减1000元',
-							start_time: '2021-07-21',
-							end_time: '2021-08-21',
-							price: 1000,
-							desc: '满300元使用',
-							status: true,
-							disabled: false
-						},
-						{
-							title: '手机立减1000元',
-							start_time: '2021-07-21',
-							end_time: '2021-08-21',
-							price: 1000,
-							desc: '满300元使用',
-							status: true,
-							disabled: true
-						},
-						{
-							title: '手机立减1000元',
-							start_time: '2021-07-21',
-							end_time: '2021-08-21',
-							price: 1000,
-							desc: '满300元使用',
-							status: true,
-							disabled: true
-						}
-					]
+					page: 1,
+					key: 'valid',
+					firstLoad: false,
+					list: []
 				},
 				{
 					name: '已失效',
 					no_thing: 'no_pay',
 					no_mag: '您还没有失效的优惠卷',
-					list: [
-						{
-							title: '手机立减1000元',
-							start_time: '2021-07-21',
-							end_time: '2021-08-21',
-							price: 1000,
-							desc: '满300元使用',
-							status: false,
-							disabled: false
-						},
-						{
-							title: '手机立减1000元',
-							start_time: '2021-07-21',
-							end_time: '2021-08-21',
-							price: 1000,
-							desc: '满300元使用',
-							status: false,
-							disabled: false
-						}
-					]
+					page: 1,
+					key: 'invalid',
+					firstLoad: false,
+					list: []
 				}
-			]
+			],
+
+			// 选择商品价格
+			price: 0
 		};
 	},
 
+	computed: {
+		// 当前页码
+		page() {
+			return this.tabList[this.tabIndex].page;
+		},
+
+		// 是否失效
+		isvaild() {
+			return this.tabList[this.tabIndex].key;
+		},
+
+		// 优惠券使用状态
+		validText() {
+			return this.tabIndex === 0 ? '不可用' : '已失效';
+		}
+	},
+
+	onLoad(e) {
+		if (e.detail) {
+			this.price = JSON.parse(e.detail).price;
+		}
+
+		this.getData();
+	},
+
 	methods: {
+		// 获取数据
+		getData() {
+			let self = this;
+			let index = self.tabIndex;
+			self.api
+				.get(
+					`/usercoupon/${self.page}/${self.isvaild}`,
+					{},
+					{
+						token: true
+					}
+				)
+				.then(res => {
+					self.tabList[index].list = res.map(v => {
+						let status = index === 0 && self.price >= parseFloat(v.coupon.min_price);
+						return {
+							id: v.id,
+							title: v.coupon.name,
+							start_time: v.coupon.start_time,
+							end_time: v.coupon.end_time,
+							price: v.coupon.value,
+							desc: v.coupon.desc,
+							status: status,
+							disabled: v.used,
+							type: v.coupon.type
+						};
+					});
+					self.tabList[index].firstLoad = true;
+				});
+		},
+
 		// 切换选项卡
 		changeTab(index) {
 			this.tabIndex = index;
+			if (!this.tabList[index].firstLoad) {
+				this.getData();
+			}
+		},
+
+		// 选择优惠券
+		chooseCoupon(item) {
+			// 已使用
+			if (item.disabled) {
+				return uni.showToast({
+					title: '该优惠券已经使用过了',
+					icon: 'none'
+				});
+			}
+
+			// 已失效/不可用
+			if (!item.status) {
+				return uni.showToast({
+					title: '该优惠券' + this.validText,
+					icon: 'none'
+				});
+			}
+
+			uni.$emit('couponUser', {
+				id: item.id,
+				type: item.type,
+				value: item.price
+			});
+
+			uni.navigateBack({
+				delta: 1
+			});
 		}
 	}
 };

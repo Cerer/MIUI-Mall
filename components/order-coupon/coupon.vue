@@ -1,10 +1,12 @@
 <template>
-	<view class="bg-white rounded border d-flex a-center border-light-secondary mb-3">
+	<view class="bg-white rounded border d-flex a-center border-light-secondary mb-3" @click="$emit('onClick')">
 		<view class="flex-1 d-flex flex-column j-center px-3">
-			<view class="font-md" :class="item.disabled || !item.status ? 'text-linght-muted' : ''">
-				{{ item.title }}
+			<view class="font-md" :class="item.disabled || !item.status ? 'text-linght-muted' : ''">{{ item.title }}</view>
+			<view class="font text-linght-muted">
+				{{ $moment.unix(item.start_time).format('YYYY-MM-DD HH:mm') }}~{{
+					$moment.unix(item.end_time).format('YYYY-MM-DD HH:mm')
+				}}
 			</view>
-			<view class="font text-linght-muted">{{ item.start_time }}~{{ item.end_time }}</view>
 		</view>
 		<view
 			class="text-white all-flex-column"
@@ -13,7 +15,7 @@
 		>
 			<view class="font-md line-h">
 				{{ item.price }}
-				<text class="font">元</text>
+				<text class="font">{{ item.type === 0 ? '元' : '折' }}</text>
 			</view>
 			<view class="font">{{ item.desc }}</view>
 			<view
@@ -21,7 +23,7 @@
 				:class="item.disabled || !item.status ? 'text-secondary' : 'main-text-color'"
 				hover-class="bg-light"
 			>
-				{{ item.status ? '去使用' : '已失效' }}
+				<slot>{{ item.status ? '去使用' : '已失效' }}</slot>
 			</view>
 		</view>
 	</view>

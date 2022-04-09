@@ -213,6 +213,19 @@
 			}
 		},
 
+		// 商品详情页--优惠券
+		{
+			"path": "pages/coupon/coupon",
+			"style": {
+				"navigationBarTitleText": "领取优惠券",
+				"app-plus": {
+					"enablePullDownRefresh": true,
+					"scrollIndicator": "none",
+					"bounce": "none"
+				}
+			}
+		},
+
 		// 商品评论
 		{
 			"path": "pages/detail-comment/detail-comment",
@@ -262,6 +275,14 @@
 				"navigationBarTitleText": "订单配送至",
 				"navigationBarBackgroundColor": "#FD6801",
 				"navigationBarTextStyle": "white"
+			}
+		},
+		
+		// 申请退款
+		{
+			"path": "pages/order-refund/order-refund",
+			"style": {
+				"navigationBarTitleText": "申请退款"
 			}
 		},
 

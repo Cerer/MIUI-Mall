@@ -21,6 +21,14 @@
 						</view>
 					</view>
 				</uni-list-item>
+				<uni-list-item showArrow clickable @click="goToCoupon">
+					<view slot="body">
+						<view class="d-flex font">
+							<text class="text-muted">优惠券</text>
+							<text class="mx-2 main-text-color">马上领取</text>
+						</view>
+					</view>
+				</uni-list-item>
 				<uni-list-item showArrow clickable @click="show('express')">
 					<view slot="body">
 						<view class="d-flex font">
@@ -62,7 +70,7 @@
 		<!-- 热门推荐 -->
 		<card headTitle="热门推荐" :headTitleWeight="false" :headBorderBottom="false">
 			<view class="row j-sb">
-				<com-list v-for="(item, index) of hotList" :key="index" :item="item" :index="index"></com-list>
+				<com-list v-for="(item, index) of hotList" :key="index" :item="item" :index="index" type="redirectTo"></com-list>
 			</view>
 		</card>
 
@@ -437,24 +445,35 @@ export default {
 
 		// 加入购物车
 		addCart() {
-			if (this.maxStock === 0) return;
+			let self = this;
+			// 没有库存
+			if (self.maxStock === 0) return;
+			let shop_id = self.detail.sku_type === 0 ? self.detail.id : this.detail.goodsSkus[self.checkedSkusIndex].id;
+			self.api
+				.post(
+					'/cart',
+					{
+						shop_id: shop_id,
+						skus_type: self.detail.sku_type,
+						num: self.detail.num
+					},
+					{
+						token: true
+					}
+				)
+				.then(res => {
+					// 通知购物车页面更新数据
+					uni.$emit('updateCart');
 
-			// 组织数据
-			let goods = this.detail;
-			goods['checked'] = false;
-			goods['attrs'] = this.selects;
+					// 隐藏筛选框
+					this.hide('attr');
 
-			// 加入购物车
-			this.addGoodsToCart(goods);
-
-			// 隐藏筛选框
-			this.hide('attr');
-
-			// 成功提示
-			uni.showToast({
-				title: '加入成功',
-				icon: 'none'
-			});
+					// 成功提示
+					uni.showToast({
+						title: '加入成功',
+						icon: 'none'
+					});
+				});
 		},
 
 		// 新增地址
@@ -463,6 +482,13 @@ export default {
 				url: '/pages/user-path-edit/user-path-edit'
 			});
 			this.hide('express');
+		},
+
+		//跳转到领取优惠券页面
+		goToCoupon() {
+			this.navigateTo({
+				url: '/pages/coupon/coupon'
+			});
 		}
 	}
 };

@@ -10,7 +10,7 @@
 			<view
 				class="iconfont icon-xiaoxi1 position-absolute text-white"
 				style="z-index: 100;font-size: 50rpx;top: 70rpx;right: 20rpx;"
-				@tap="navigate('msg-list')"
+				@tap="navigate('msg-list', true)"
 			></view>
 
 			<image src="/static/images/my/bg.jpg" style="height: 320rpx;width: 100%;"></image>

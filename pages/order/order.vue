@@ -20,7 +20,7 @@
 				<!-- 有订单数据 -->
 				<template v-if="tab.list.length > 0">
 					<block v-for="(item, index) in tab.list" :key="index">
-						<order-list :item="item" :index="index"></order-list>
+						<order-list :item="item" :index="index" @update="getOrderList"></order-list>
 					</block>
 				</template>
 
@@ -65,96 +65,116 @@ export default {
 					name: '全部',
 					no_thing: '',
 					no_mag: '您还没有订单',
-					list: [
-						{
-							create_time: '2021-07-20 10:20',
-							status: '已发货',
-							order_items: [
-								{
-									cover: '/static/images/list/5.jpg',
-									title: '小米8',
-									pPrice: 1999.0,
-									attrs: '金色 标配',
-									num: 1
-								}
-							],
-							totle_num: 3,
-							totle_price: 299.0
-						},
-						{
-							create_time: '2021-07-20 10:20',
-							status: '已发货',
-							order_items: [
-								{
-									cover: '/static/images/list/5.jpg',
-									title: '小米8',
-									pPrice: 1999.0,
-									attrs: '金色 标配',
-									num: 1
-								}
-							],
-							totle_num: 3,
-							totle_price: 299.0
-						}
-					]
+					key: 'all',
+					list: []
 				},
 				{
 					name: '待付款',
 					no_thing: 'no_pay',
 					no_mag: '您还没有待付款订单',
+					key: 'paying',
 					list: []
 				},
 				{
 					name: '待收货',
 					no_thing: 'no_receiving',
 					no_mag: '您还没有待收货订单',
+					key: 'receiving',
 					list: []
 				},
 				{
 					name: '待评价',
 					no_thing: 'no_comment',
 					no_mag: '您还没有待评价订单',
+					key: 'reviewing',
 					list: []
 				}
 			],
 
-			hotList: [
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				},
-				{
-					cover: '/static/images/list/1.jpg',
-					title: '米家空调',
-					desc: '1.5匹频率',
-					oPrice: 2699,
-					pPrice: 1366
-				}
-			]
+			//热门推荐列表数据
+			hotList: []
 		};
 	},
 
+	computed: {
+		key() {
+			return this.tabList[this.tabIndex].key;
+		}
+	},
+
+	onLoad() {
+		this.getHotList();
+	},
+
+	onShow() {
+		this.getOrderList();
+	},
+
 	methods: {
+		// 获取订单列表数据
+		getOrderList() {
+			let self = this;
+			let index = self.tabIndex;
+			self.api
+				.post(
+					`/order/${self.key}`,
+					{},
+					{
+						token: true
+					}
+				)
+				.then(res => {
+					self.tabList[index].list = res.map(i => {
+						let order_items = i.order_items.map(v => {
+							let attrs = [];
+							if (v.skus_type === 1 && v.goods_skus && v.goods_skus.skus) {
+								let skus = v.goods_skus.skus;
+								for (let k in skus) {
+									attrs.push(skus[k].value);
+								}
+							}
+							return {
+								id: v.goods_id,
+								cover: v.goods_item.cover,
+								title: v.goods_item.title,
+								pprice: v.price,
+								attrs: attrs.join(','),
+								num: v.num
+							};
+						});
+
+						return {
+							id: i.id,
+							create_time: i.create_time,
+							status: self.util.formatStatus(i),
+							order_items: order_items,
+							total_price: i.total_price
+						};
+					});
+				});
+		},
+
+		// 获取热门推荐数据
+		getHotList() {
+			let self = this;
+			self.api.get('/goods/hotlist').then(res => {
+				self.hotList = res.map(v => {
+					return {
+						id: v.id,
+						cover: v.cover,
+						title: v.title,
+						desc: v.desc,
+						oprice: v.min_price,
+						pprice: v.min_oprice
+					};
+				});
+			});
+		},
+
 		// 切换选项卡
 		changeTab(index) {
 			this.tabIndex = index;
+			this.getOrderList();
 		}
 	}
 };

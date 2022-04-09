@@ -36,7 +36,11 @@ Vue.prototype.navigateTo = (options) => {
 	}
 
 	uni.navigateTo(options);
-}
+};
+
+//时间日期js处理库
+import moment from '@/common/moment/moment.js'
+Vue.prototype.$moment = moment;
 
 
 App.mpType = 'app'

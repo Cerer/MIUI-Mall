@@ -1,3 +1,5 @@
+import api from "@/common/lib/request.js"
+import util from '@/utils/util.js';
 export default {
 	state: {
 		list: [],
@@ -35,6 +37,14 @@ export default {
 		// 禁用全选
 		disabledSelectAll: (state) => {
 			return state.list.length === 0;
+		},
+
+		// 购物车商品数量
+		cartCount: (state) => {
+			if (state.list.length <= 99) {
+				return state.list.length;
+			}
+			return '99+'
 		}
 	},
 
@@ -42,6 +52,7 @@ export default {
 		// 初始化数据
 		initCartData(state, list) {
 			state.list = list;
+			util.updateCartBadge(state.list.length);
 		},
 
 		// 选中/取消某一个商品
@@ -88,6 +99,7 @@ export default {
 				// 返回没有选中的数据，就相当于把选中的数据删除掉
 				return state.selectedList.indexOf(v.id) === -1;
 			})
+			util.updateCartBadge(state.list.length);
 		},
 
 		// 初始化popupIndex
@@ -97,11 +109,42 @@ export default {
 
 		// 加入购物车
 		addGoodsToCart(state, goods) {
-			state.list.unshift(goods)
+			state.list.unshift(goods);
+			util.updateCartBadge(state.list.length);
+		},
+
+		// 清空购物车
+		clearCart(state) {
+			state.list = [];
+			state.selectedList = [];
+			util.updateCartBadge(state.list.length);
 		}
 	},
 
 	actions: {
+		// 更新购物车列表
+		updateCartList({
+			commit,
+			state
+		}) {
+			return new Promise((res, rej) => {
+				api.get('/cart', {}, {
+						token: true,
+						toase: false
+					}).then(item => {
+						// 取消全选
+						commit('unSelectedAll');
+
+						// 赋值
+						commit('initCartData', item);
+						res(item)
+					})
+					.catch(err => {
+						rej(err)
+					});
+			})
+		},
+
 		// 显示属性选显卡
 		doShowPopup({
 			commit,
@@ -138,18 +181,36 @@ export default {
 
 		// 删除选中数据
 		doDelGoods({
+			state,
 			commit,
 			getters
 		}) {
+			// 先判断有没有选中数据
+			if (state.selectedList.length === 0) {
+				return uni.showToast({
+					title: '请选择要删除的商品',
+					icon: 'none'
+				});
+			}
+
 			uni.showModal({
 				content: "是否删除选中数据?",
-				success() {
-					commit('delGoods');
-					commit('unSelectedAll');
-					uni.showToast({
-						title: "删除成功",
-						icon: "none"
-					})
+				success(res) {
+					if (res.confirm) {
+						api.post('/cart/delete', {
+							shop_ids: state.selectedList.join(',')
+						}, {
+							token: true
+						}).then(item => {
+							commit('delGoods');
+							commit('unSelectedAll');
+							uni.showToast({
+								title: "删除成功",
+								icon: "none"
+							})
+						})
+					}
+
 				}
 			})
 		}

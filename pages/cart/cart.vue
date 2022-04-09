@@ -141,7 +141,8 @@ export default {
 
 	computed: {
 		...mapState({
-			list: state => state.cart.list
+			list: state => state.cart.list,
+			selectedList: state => state.cart.selectedList
 		}),
 
 		...mapGetters(['checkedAll', 'totalPrice', 'disabledSelectAll', 'popupData'])
@@ -154,8 +155,18 @@ export default {
 		};
 	},
 
-	onShow() {
+	onLoad() {
 		this.getData();
+
+		// 监听购物车更新
+		uni.$on('updateCart', () => {
+			this.getData();
+		});
+	},
+
+	// 卸载
+	beforeDestroy() {
+		uni.$off('updateCart');
 	},
 
 	// 下拉刷新
@@ -166,27 +177,14 @@ export default {
 	methods: {
 		...mapMutations(['selectItem', 'initCartData', 'unSelectedAll']),
 
-		...mapActions(['doShowPopup', 'doHidePopup', 'doSelectedAll', 'doDelGoods']),
+		...mapActions(['doShowPopup', 'doHidePopup', 'doSelectedAll', 'doDelGoods', 'updateCartList']),
 
 		//获取数据
 		getData() {
 			let self = this;
 			// 获取购物车数据
-			self.api
-				.get(
-					'/cart',
-					{},
-					{
-						token: true,
-						toase: false
-					}
-				)
+			this.updateCartList()
 				.then(res => {
-					// 取消全选
-					this.unSelectedAll();
-					
-					// 赋值
-					self.initCartData(res);
 					uni.stopPullDownRefresh();
 				})
 				.catch(err => {
@@ -210,8 +208,16 @@ export default {
 
 		// 订单结算
 		orderConfirm() {
+			let self = this;
+			if (self.selectedList.length === 0) {
+				return uni.showToast({
+					title: '请选择要结算的商品',
+					icon: 'none'
+				});
+			}
+
 			uni.navigateTo({
-				url: '/pages/order-confirm/order-confirm'
+				url: '/pages/order-confirm/order-confirm?detail=' + JSON.stringify(self.selectedList)
 			});
 		},
 

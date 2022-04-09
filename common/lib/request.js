@@ -55,6 +55,11 @@ export default {
 			uni.request({
 				...options,
 				success: (result) => {
+					// 返回原始数据
+					if (options.native) {
+						return res(result);
+					}
+
 					// 服务端失败
 					if (result.statusCode !== 200) {
 
@@ -98,7 +103,7 @@ export default {
 		option.method = 'POST';
 		return this.request(option);
 	},
-	
+
 	// delete请求
 	del(url, data = {}, option = {}) {
 		option.url = url;
