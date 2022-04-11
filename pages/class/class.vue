@@ -1,47 +1,72 @@
+<!-- 分类 -->
 <template>
-	<!-- 分类 -->
-	<view class="d-flex border-top border-light-secondary" style="height: 100%;box-sizing: border-box;">
-		<!-- 处理初次加载页面出现短暂白屏问题 -->
-		<loading-plus v-if="beforeReady"></loading-plus>
+	<view style="height: 100vh;" class="d-flex flex-column">
+		<!-- #ifdef MP -->
+		<!-- 自定义导航栏 -->
+		<view class="d-flex a-center" style="height: 90rpx;">
+			<!-- 左边 -->
+			<view class="d-flex j-center a-center" style="width: 85rpx;" @click="clickXiaoxi">
+				<text class="iconfont icon-xiaoxi1"></text>
+			</view>
 
-		<scroll-view
-			id="leftScroll"
-			scroll-y
-			style="flex: 1;height: 100%;"
-			class="border-right border-light-secondary"
-			:scroll-top="leftScrollTop"
-		>
+			<!-- 中间 -->
 			<view
-				class="border-bottom border-light-secondary py-1 left-scroll-item"
-				hover-class="bg-linght-muted"
-				v-for="(item, index) of cate"
-				:key="index"
-				@tap="changeCate(index)"
+				class="flex-1 bg-linght-muted rounded d-flex a-center text-linght-muted"
+				style="height: 65rpx;"
+				@click="clickSearchInput"
 			>
-				<view class="py-1 font-md text-muted text-center" :class="activeIndex === index ? 'class-active' : ''">
-					{{ item.name }}
-				</view>
+				<text class="iconfont icon-sousuo mx-2"></text>
+				智能积木
 			</view>
-		</scroll-view>
-		<scroll-view
-			scroll-y
-			style="flex: 3.5;height: 100%;"
-			:scroll-top="rightScrollTop"
-			:scroll-with-animation="true"
-			@scroll="onRightScroll"
-		>
-			<view class="row right-scroll-item" v-for="(item, index) of list" :key="index">
+
+			<!-- 右边 -->
+			<view class="d-flex j-center a-center" style="width: 85rpx;"><text class="iconfont icon-richscan_icon"></text></view>
+		</view>
+		<!-- #endif -->
+
+		<view class="d-flex border-top border-light-secondary" style="height: 100%;box-sizing: border-box;">
+			<!-- 处理初次加载页面出现短暂白屏问题 -->
+			<loading-plus v-if="beforeReady"></loading-plus>
+
+			<scroll-view
+				id="leftScroll"
+				scroll-y
+				style="flex: 1;height: 100%;"
+				class="border-right border-light-secondary"
+				:scroll-top="leftScrollTop"
+			>
 				<view
-					class="span24-8 text-center py-2"
-					v-for="(item2, index2) of item.list"
-					:key="index2"
-					@click="openDetail(item2)"
+					class="border-bottom border-light-secondary py-1 left-scroll-item"
+					hover-class="bg-linght-muted"
+					v-for="(item, index) of cate"
+					:key="index"
+					@tap="changeCate(index)"
 				>
-					<image :src="item2.cover" style="width: 120upx;height: 120upx;"></image>
-					<text class="d-block">{{ item2.name }}</text>
+					<view class="py-1 font-md text-muted text-center" :class="activeIndex === index ? 'class-active' : ''">
+						{{ item.name }}
+					</view>
 				</view>
-			</view>
-		</scroll-view>
+			</scroll-view>
+			<scroll-view
+				scroll-y
+				style="flex: 3.5;height: 100%;"
+				:scroll-top="rightScrollTop"
+				:scroll-with-animation="true"
+				@scroll="onRightScroll"
+			>
+				<view class="row right-scroll-item" v-for="(item, index) of list" :key="index">
+					<view
+						class="span24-8 text-center py-2"
+						v-for="(item2, index2) of item.list"
+						:key="index2"
+						@click="openDetail(item2)"
+					>
+						<image :src="item2.cover" style="width: 120upx;height: 120upx;"></image>
+						<text class="d-block">{{ item2.name }}</text>
+					</view>
+				</view>
+			</scroll-view>
+		</view>
 	</view>
 </template>
 
@@ -96,6 +121,22 @@ export default {
 	onReady() {},
 
 	methods: {
+		// #ifdef MP
+		// 小程序点击消息
+		clickXiaoxi() {
+			uni.navigateTo({
+				url: '/pages/msg-list/msg-list'
+			});
+		},
+
+		// 小程序点击搜索
+		clickSearchInput() {
+			uni.navigateTo({
+				url: '/pages/search/search'
+			});
+		},
+		// #endif
+
 		// 获取节点信息
 		getElInfo(obj = {}) {
 			return new Promise((res, rej) => {

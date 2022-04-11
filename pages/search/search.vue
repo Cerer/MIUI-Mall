@@ -1,6 +1,16 @@
 <template>
 	<!-- 搜索页 -->
 	<view>
+		<!-- #ifdef MP -->
+		<!-- 自定义导航栏 -->
+		<view class="d-flex a-center" style="height: 90rpx;">
+			<input type="text" v-model="keyword" class="flex-1 bg-linght-muted rounded ml-3 px-2 py-1" placeholder="智能积木" />
+
+			<!-- 右边 -->
+			<view class="d-flex j-center a-center" style="width: 85rpx;" @click="search">搜索</view>
+		</view>
+		<!-- #endif -->
+
 		<card headTitle="热门搜索" bodyCover="/static/images/search/search-banner.png"></card>
 
 		<!-- 多色按钮 -->

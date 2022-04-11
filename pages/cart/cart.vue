@@ -145,7 +145,7 @@ export default {
 			selectedList: state => state.cart.selectedList
 		}),
 
-		...mapGetters(['checkedAll', 'totalPrice', 'disabledSelectAll', 'popupData'])
+		...mapGetters(['checkedAll', 'totalPrice', 'disabledSelectAll'])
 	},
 
 	data() {

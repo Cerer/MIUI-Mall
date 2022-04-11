@@ -44,32 +44,7 @@ export default {
 
 	data() {
 		return {
-			list: [
-				{
-					title: '支付宝支付',
-					desc: '推荐使用支付宝支付',
-					extraIcon: {
-						type: 'icon-zhifubao',
-						color: '#007bff',
-						size: 60,
-						isUniIcon: false
-					},
-					check: false,
-					value: 'alipay'
-				},
-				{
-					title: '微信支付',
-					desc: '',
-					extraIcon: {
-						type: 'icon-wxpay',
-						color: '#28a745',
-						size: 60,
-						isUniIcon: false
-					},
-					check: false,
-					value: 'wxpay'
-				}
-			],
+			list: [],
 
 			// 支付方式
 			payMethods: 'alipay',
@@ -94,6 +69,54 @@ export default {
 		}
 
 		this.detail = JSON.parse(e.detail);
+
+		// #ifdef APP-PLUS
+		this.list = [
+			{
+				title: '支付宝支付',
+				desc: '推荐使用支付宝支付',
+				extraIcon: {
+					type: 'icon-zhifubao',
+					color: '#007bff',
+					size: 60,
+					isUniIcon: false
+				},
+				check: false,
+				value: 'alipay'
+			},
+			{
+				title: '微信支付',
+				desc: '',
+				extraIcon: {
+					type: 'icon-wxpay',
+					color: '#28a745',
+					size: 60,
+					isUniIcon: false
+				},
+				check: false,
+				value: 'wxpay'
+			}
+		];
+		// #endif
+
+		// #ifdef MP-WEIXIN
+		this.list = [
+			{
+				title: '微信支付',
+				desc: '',
+				extraIcon: {
+					type: 'icon-wxpay',
+					color: '#28a745',
+					size: 60,
+					isUniIcon: false
+				},
+				check: false,
+				value: 'wxpay'
+			}
+		];
+
+		this.payMethods = 'wxpay';
+		// #endif
 	},
 
 	methods: {
@@ -111,6 +134,84 @@ export default {
 
 			self.loading = true;
 
+			// #ifdef APP-PLUS
+			self.appPay();
+			// #endif
+
+			// #ifdef MP-WEIXIN
+			self.weixinMpPay();
+			// #endif
+		},
+
+		// 微信小程序支付
+		weixinMpPay() {
+			let self = this;
+			//1.请求接口，先登录获取code
+			uni.login({
+				success: e => {
+					//2.
+					self.api
+						.get(
+							`/payment/${self.detail.id}/wxmppay/${e.code}`,
+							{},
+							{
+								token: true,
+								native: true
+							}
+						)
+						.then(item => {
+							// item.data(包含appId,nonceStr,package,paySign,signType,timeStamp)
+							let paymentData = item.data;
+							uni.requestPayment({
+								timeStamp: paymentData.timeStamp,
+								nonceStr: paymentData.nonceStr,
+								package: paymentData.package,
+								signType: 'MD5',
+								paySign: paymentData.paySign,
+								success: function(res) {
+									console.log('success:' + JSON.stringify(res));
+									//防止重定向/重复提交
+									uni.redirectTo({
+										url: '../pay-result/pay-result'
+									});
+								},
+								fail: function(err) {
+									console.log('fail:' + JSON.stringify(err));
+									uni.showModal({
+										content: '支付失败，原因为:' + err.errMsg,
+										showCancel: false
+									});
+								},
+
+								complete: () => {
+									self.loading = false;
+								}
+							});
+						})
+						.catch(err => {
+							self.loading = false;
+							console.log(err);
+							uni.showToast({
+								title: '支付失败',
+								icon: 'none'
+							});
+						});
+				},
+
+				fail: e => {
+					console.log('微信小程序支付失败', e);
+					self.loading = false;
+					uni.showModal({
+						content: '支付失败，原因为:' + e.errMsg,
+						showCancel: false
+					});
+				}
+			});
+		},
+
+		// app支付
+		appPay() {
+			let self = this;
 			self.api
 				.get(
 					`/payment/${self.detail.id}/${self.payMethods}`,

@@ -49,6 +49,7 @@
 					hover-class="bg-linght-muted"
 					v-for="(item, index) in typeIcon"
 					:key="index"
+					@click="openOrder(item)"
 				>
 					<view class="iconfont font-lg line-h" :class="item.iconName"></view>
 					<view>{{ item.title }}</view>
@@ -101,19 +102,23 @@ export default {
 			typeIcon: [
 				{
 					title: '待付款',
-					iconName: 'icon-4-145'
+					iconName: 'icon-4-145',
+					index: 1
 				},
 				{
 					title: '待收货',
-					iconName: 'icon-daishouhuo'
+					iconName: 'icon-daishouhuo',
+					index: 2
 				},
 				{
 					title: '待评价',
-					iconName: 'icon-xiaoxi'
+					iconName: 'icon-xiaoxi',
+					index: 3
 				},
 				{
 					title: '退换修',
-					iconName: 'icon-buoumaotubiao46'
+					iconName: 'icon-buoumaotubiao46',
+					index: 4
 				}
 			],
 
@@ -181,6 +186,16 @@ export default {
 			if (!this.loginStatus) {
 				uni.navigateTo({
 					url: '../login/login'
+				});
+			}
+		},
+
+		// 打开全部订单tab
+		openOrder(item) {
+			let self = this;
+			if (item.index) {
+				self.navigateTo({
+					url: `/pages/order/order?tabIndex=${item.index}`
 				});
 			}
 		},

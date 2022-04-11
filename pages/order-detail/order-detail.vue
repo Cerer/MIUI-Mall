@@ -52,6 +52,32 @@
 				<view slot="footer" class="font-md text-linght-muted ml-auto">{{ no }}</view>
 			</uni-list-item>
 		</card>
+		<card v-if="extra" headTitle="退款相关">
+			<uni-list-item title="申请退款">
+				<view slot="footer" class="font-md text-linght-muted ml-auto">{{ extra.refund_reason }}</view>
+			</uni-list-item>
+			<view style="height: 50rpx;"></view>
+		</card>
+
+		<view v-if="status === '待支付' || status === '待发货' || status === '待收货'" style="height: 100rpx;"></view>
+		<view
+			v-if="status === '待支付' || status === '待发货' || status === '待收货'"
+			class="d-flex a-center j-end position-fixed bottom-0 left-0 right-0 bg-white px-3"
+			style="height: 100rpx;"
+		>
+			<template v-if="status === '待支付'">
+				<common-button @click="openPayMethods">去支付</common-button>
+				<common-button @click="closeOrder">取消订单</common-button>
+			</template>
+			<template v-else-if="status === '待发货'">
+				<common-button>提醒发货</common-button>
+				<common-button @click="applyRefund">申请退款</common-button>
+			</template>
+			<template v-else-if="status === '待收货'">
+				<common-button @click="openLogistics">查看物流</common-button>
+				<common-button @click="received">确认收货</common-button>
+			</template>
+		</view>
 	</view>
 </template>
 
@@ -60,6 +86,7 @@ import orderListItem from '@/components/order/order-list-item.vue';
 import uniListItem from '@/components/uni-ui/uni-list-item/uni-list-item.vue';
 import price from '@/components/common/price.vue';
 import card from '@/components/common/card.vue';
+import commonButton from '@/components/common/common-button.vue';
 var timer = '';
 
 export default {
@@ -67,7 +94,8 @@ export default {
 		orderListItem,
 		uniListItem,
 		price,
-		card
+		card,
+		commonButton
 	},
 
 	data() {
@@ -172,11 +200,6 @@ export default {
 			return `${province} ${city} ${district} ${address}`;
 		},
 
-		// 优惠价格
-		couponValue() {
-			return this.couponUserItem.coupon.value;
-		},
-
 		// 优惠券
 		coupon() {
 			if (Array.isArray(this.couponUserItem) && this.couponUserItem.length === 0) {
@@ -205,14 +228,16 @@ export default {
 		}
 
 		this.order_id = e.order_id;
-
-		this.getData();
 	},
 
 	onUnload() {
 		if (timer) {
 			clearInterval(timer);
 		}
+	},
+
+	onShow() {
+		this.getData();
 	},
 
 	methods: {
@@ -295,6 +320,119 @@ export default {
 					self.timeDown = self.util.timeDown(self.end_time);
 				}, 1000);
 			}
+		},
+
+		//去支付
+		openPayMethods() {
+			let self = this;
+			//跳转到支付页面
+			uni.navigateTo({
+				url:
+					'/pages/pay-methods/pay-methods?detail=' +
+					JSON.stringify({
+						id: self.order_id,
+						price: self.total_price
+					})
+			});
+		},
+
+		//取消订单
+		closeOrder() {
+			let self = this;
+			uni.showModal({
+				content: '是否要取消该订单?',
+				success: res => {
+					if (res.confirm) {
+						uni.showLoading({
+							title: '取消订单中...',
+							mask: false
+						});
+
+						self.api
+							.post(
+								`/closeorder/${self.order_id}`,
+								{},
+								{
+									token: true
+								}
+							)
+							.then(res => {
+								uni.hideLoading();
+								uni.navigateBack({
+									delta: 1
+								});
+								uni.showToast({
+									title: '取消订单成功',
+									icon: 'none'
+								});
+							})
+							.catch(err => {
+								uni.hideLoading();
+							});
+					}
+				}
+			});
+		},
+
+		//申请退款
+		applyRefund() {
+			let self = this;
+			uni.navigateTo({
+				url:
+					'/pages/order-refund/order-refund?detail=' +
+					JSON.stringify({
+						id: self.order_id
+					})
+			});
+		},
+
+		// 查看物流(这块的数据因为还没有获取到数据，所以还没有校验是否正确返回显示)
+		openLogistics() {
+			let self = this;
+			uni.navigateTo({
+				url:
+					'/pages/logistics-detail/logistics-detail?detail=' +
+					JSON.stringify({
+						id: self.order_id
+					})
+			});
+		},
+
+		//确认收货(目前因为还没有数据，所以还没有校验接口是否能通)
+		received() {
+			let self = this;
+			uni.showModal({
+				content: '是否要确认收货?',
+				success: res => {
+					if (res.confirm) {
+						uni.showLoading({
+							title: '确认收货中...',
+							mask: false
+						});
+						self.api
+							.post(
+								`/order/${self.order_id}/received`,
+								{},
+								{
+									token: true
+								}
+							)
+							.then(item => {
+								uni.hideLoading();
+								uni.navigateBack({
+									delta: 1
+								});
+								uni.showToast({
+									title: '确认收货成功',
+									icon: 'none'
+								});
+							})
+							.catch(err => {
+								uni.hideLoading();
+							});
+					}
+				}
+			});
 		}
 	}
 };

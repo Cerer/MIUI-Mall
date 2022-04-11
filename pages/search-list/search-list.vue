@@ -1,8 +1,22 @@
 <template>
 	<!-- 搜索页点击进去的商品列表 -->
 	<view>
+		<!-- #ifdef MP -->
+		<!-- 自定义导航栏 -->
+		<view class="d-flex a-center bg-white" style="height: 90rpx;position: fixed;top: 0;left: 0;right: 0;z-index: 100;">
+			<input type="text" v-model="keyword" class="flex-1 bg-linght-muted rounded ml-3 px-2 py-1" placeholder="智能积木" />
+
+			<!-- 右边 -->
+			<view class="d-flex j-center a-center" style="width: 85rpx;" @click="search">搜索</view>
+		</view>
+		<view style="height: 90rpx;"></view>
+		<!-- #endif -->
+
 		<!-- 排序|筛选 -->
-		<view class="d-flex border-top border-bottoms" style="height: 100upx;">
+		<view
+			class="d-flex border-top border-bottoms a-center position-fixed left-0 right-0 bg-white"
+			style="height: 100upx;z-index: 100;"
+		>
 			<view
 				class="flex-1 all-flex-row font-md"
 				v-for="(item, index) of screen.list"
@@ -24,6 +38,7 @@
 
 			<view class="flex-1 all-flex-row font-md main-text-color" @click="clickRDrawer('open')">筛选</view>
 		</view>
+		<view style="height: 100rpx;"></view>
 
 		<!-- 筛选抽屉 -->
 		<uni-drawer ref="showRight" mode="right" :width="280" @change="closeDrawer">
@@ -203,7 +218,7 @@ export default {
 			this.addHistory();
 
 			this.initSearch();
-			
+
 			this.getData(true);
 		},
 

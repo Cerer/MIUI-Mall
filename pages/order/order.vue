@@ -102,7 +102,11 @@ export default {
 		}
 	},
 
-	onLoad() {
+	onLoad(e) {
+		if (e.tabIndex) {
+			this.tabIndex = parseInt(e.tabIndex);
+		}
+
 		this.getHotList();
 	},
 
